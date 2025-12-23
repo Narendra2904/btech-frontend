@@ -6,295 +6,8 @@
     <title>JNTUH RESULTS | BACK.BENCHERS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/png" href="./assets/fav.png">
-      <script defer src="https://btech-jntuh-results.vercel.app/_vercel/insights/script.js"></script>
-
-
+    <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-        
-        :root {
-            --accent: #FFD700;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #080808;
-            color: #ffffff;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
-
-        /* Spotlight Effect */
-        #spotlight {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255, 215, 0, 0.05) 0%, rgba(0,0,0,0) 50%);
-            z-index: 999;
-        }
-
-        .yellow-accent { color: var(--accent); }
-        .bg-yellow-accent { background-color: var(--accent); }
-        
-        .heading-tight { letter-spacing: -0.025em; line-height: 1.2; }
-        .text-micro { font-size: 0.65rem; letter-spacing: 0.08em; }
-
-        /* Card Interaction */
-        .interactive-card {
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .interactive-card:hover {
-            transform: translateY(-4px) scale(1.01);
-            border-color: rgba(255, 215, 0, 0.3);
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
-        }
-
-        .input-focus:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
-        }
-
-        /* Animations */
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-reveal { animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-        .loader-bar {
-            width: 0%;
-            height: 2px;
-            background: var(--accent);
-            transition: width 1s ease-in-out;
-        }
-
-        /* Emoji Burst Container */
-        #burst-container {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 1000;
-        }
-
-        .particle {
-            position: absolute;
-            font-size: 24px;
-            animation: particleAnim 1s ease-out forwards;
-        }
-
-        @keyframes particleAnim {
-            0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
-        }
-
-        /* Optimized Single Page Print Styles */
-        @media print {
-            @page { 
-                margin: 0.5cm;
-                size: portrait;
-            }
-            html, body {
-                height: 100%;
-                background: #ffffff !important;
-                color: #000000 !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            nav, footer, .search-section, .btn-print, #spotlight, .search-container-box, #burst-container { 
-                display: none !important; 
-            }
-            main {
-                padding: 0 !important;
-                margin: 0 !important;
-                max-width: 100% !important;
-            }
-            #resultContainer { 
-                display: block !important; 
-                margin: 0 !important; 
-                padding: 5px !important;
-            }
-            /* Force side-by-side Layout for Print */
-            .student-info-grid {
-                display: grid !important;
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 8px !important;
-                margin-bottom: 10px !important;
-            }
-            .result-card { 
-                background: #f5f5f5 !important; 
-                border: 1px solid #000000 !important;
-                color: #000000 !important; 
-                box-shadow: none !important; 
-                transform: none !important;
-                padding: 10px !important;
-                margin-bottom: 0 !important;
-            }
-            #resultContainer p, #resultContainer h3 { 
-                color: #000000 !important; 
-            }
-            #resName, #resRoll, #resCgpa, #resSgpa {
-                color: #000000 !important;
-                font-size: 14px !important;
-            }
-            table { 
-                border-collapse: collapse !important; 
-                width: 100% !important; 
-                border: 1px solid #000000 !important; 
-                font-size: 10px !important;
-            }
-            th { 
-                background-color: #000000 !important; 
-                color: #ffffff !important; 
-                border: 1px solid #000000 !important;
-                padding: 6px !important;
-                font-weight: 900 !important;
-            }
-            td { 
-                border: 1px solid #ffffff !important; 
-                color: #000000 !important; 
-                padding: 4px !important;
-            }
-            .grade-badge { 
-                border: 1px solid #000000 !important; 
-                background: #ffffff !important; 
-                color: #000000 !important; 
-                font-weight: 900 !important; 
-            }
-            .animate-reveal { 
-                animation: none !important; 
-                transform: none !important; 
-                opacity: 1 !important; 
-            }
-            .status-badge {
-                border: 1px solid #22c55e !important;
-                background: transparent !important;
-            }
-            .overflow-x-auto { overflow: visible !important; }
-        }
-        select option {
-    background-color: #ffffff;
-    color: #000000;
-    font-weight: bold;
-}
-
-
-@media print {
-
-  /* PAGE SETUP */
-  @page {
-    size: A4;
-    margin: 12mm;
-  }
-
-  /* HIDE EVERYTHING EXTRA */
-  nav,
-  footer,
-  .search-section,
-  .btn-print,
-  #spotlight,
-  #burst-container,
-  #mobileMenu {
-    display: none !important;
-  }
-
-  /* BODY RESET */
-  html, body {
-    background: #ffffff !important;
-    color: #000000 !important;
-    font-family: Arial, Helvetica, sans-serif !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  /* MAIN CONTAINER */
-  main {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: 100% !important;
-  }
-
-  /* RESULT CARD */
-  .result-card {
-    background: #ffffff !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-  }
-
-  /* STUDENT INFO */
-  .student-info-grid {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 6px !important;
-    margin-bottom: 10px !important;
-  }
-
-  .student-info-grid div {
-    background: #ffffff !important;
-    border: 1px solid #444 !important;
-    padding: 6px !important;
-  }
-
-  /* TABLE */
-  table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    font-size: 10px !important;
-  }
-
-  th {
-    background: #ffffff !important;
-    color: #000000 !important;
-    border: 1px solid #555 !important;
-    padding: 6px !important;
-    text-transform: uppercase;
-  }
-
-  td {
-    background: #ffffff !important;
-    color: #000000 !important;
-    border: 1px solid #444 !important;
-    padding: 5px !important;
-  }
-
-  /* REMOVE COLORS & BADGES */
-  .yellow-accent,
-  .bg-yellow-accent,
-  .grade-badge,
-  span[class*="SUPPLY"] {
-    color: #000000 !important;
-    background: transparent !important;
-    border: none !important;
-  }
-
-  /* HEADERS INSIDE TABLE */
-  tr td[colspan] {
-    background: #ffffff !important;
-    color: #000000 !important;
-    font-weight: bold !important;
-    border: 1px solid #444 !important;
-  }
-
-  /* SGPA / CGPA */
-  .text-green-400,
-  .text-yellow-400 {
-    color: #000000 !important;
-    font-weight: bold;
-  }
-
-  /* NO ANIMATIONS */
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
-}
-
-    </style>
-    
 </head>
 
 <body class="min-h-screen flex flex-col">
@@ -302,7 +15,6 @@
     <div id="spotlight"></div>
     <div id="burst-container"></div>
 
-    <!-- Header / Navbar -->
     <!-- Header / Navbar -->
 <nav class="border-b border-zinc-800/60 bg-black/80 backdrop-blur-xl sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -354,7 +66,7 @@
       group-hover:text-yellow-accent
     "
   >
-    &nbsp BENCHERS
+    BENCHERS
   </span>
 </div>
 
@@ -368,9 +80,6 @@
 
     <!-- Right Side -->
     <div class="flex items-center gap-4">
-
-      <!-- Print -->
-      
 
       <!-- Status -->
       <div class="hidden md:flex items-center gap-2 text-micro font-bold text-zinc-500
@@ -402,27 +111,7 @@
     </div>
   </div>
 </nav>
-<div class="bg-black-50 border-b-2 border-dashed border-blue-400 px-3 py-3">
-  <div class="max-w-4xl mx-auto flex items-center justify-center gap-2 text-white-800 flex-wrap text-sm md:text-base font-medium leading-tight">
 
-    <i data-lucide="info" class="w-5 h-5 md:w-6 md:h-6"></i>
-
-    <span>Results raaledha?</span>
-
-    <span class="inline-flex items-center gap-1 font-semibold">
-      chill bro 😌
-    </span>
-
-    <span>browser</span>
-
-    <span class="inline-flex items-center gap-1 font-semibold">
-      refresh <i data-lucide="refresh-cw" class="w-5 h-5 md:w-6 md:h-6"></i>
-    </span>
-
-    <span>chesi malli try cheyy… vastayi 😎</span>
-
-  </div>
-</div>
 
     <!-- Main Content -->
     <main class="flex-grow max-w-5xl mx-auto w-full px-6 py-12">
@@ -468,81 +157,84 @@
             <p class="text-zinc-600 font-bold uppercase tracking-[0.4em] text-[10px] mt-6">Decrypting Database...</p>
         </div>
 
-        <!-- Result Display Section -->
-        <div id="resultContainer" class="hidden space-y-6">
-            <!-- Student Info Header -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 student-info-grid">
-                <div class="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl interactive-card animate-reveal result-card" style="animation-delay: 0.1s">
-                    <p class="text-zinc-500 text-micro font-bold uppercase mb-2">Student Name</p>
-                    <p id="resName" class="text-base font-bold text-zinc-100">---</p>
-                </div>
-                <div class="bg-zinc-900/60 border border-zinc-800 p-6 rounded-2xl interactive-card animate-reveal result-card" style="animation-delay: 0.2s">
-                    <p class="text-zinc-500 text-micro font-bold uppercase mb-2">Hall Ticket Number</p>
-                    <p id="resRoll" class="text-base font-bold yellow-accent tracking-widest">---</p>
-                </div>
-                <!-- Semester Selector -->
-<div class="flex justify-end mb-4">
- <select
-  id="semesterSelect"
-  class="bg-black border-2 border-yellow-500 text-yellow-400 
-         px-4 py-3 rounded-xl text-sm font-bold 
-         tracking-widest uppercase min-w-[220px]"
->
-  </select>
+        <div id="resultContainer" class="hidden space-y-4 md:space-y-6">
+    
+    <div class="info-table-container">
+        <table class="w-full border-collapse border-2 border-zinc-800 info-table">
+            <tbody class="block">
+                <tr class="grid grid-cols-3 border-b border-zinc-800">
+                    <td class="p-0 border-r border-zinc-800">
+                        <div class="px-2 md:px-4 py-2">
+                            <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">Name</p>
+                            <p id="resName" class="font-bold text-[9px] md:text-[13px] truncate">---</p>
+                        </div>
+                    </td>
+                    <td class="p-0 border-r border-zinc-800">
+                        <div class="px-2 md:px-4 py-2">
+                            <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">Roll Number</p>
+                            <p id="resRoll" class="font-bold text-[9px] md:text-[13px] yellow-accent">---</p>
+                        </div>
+                    </td>
+                    <td class="p-0">
+                        <div class="px-2 md:px-4 py-2">
+                            <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">Col Code</p>
+                            <p id="resCollegeCode" class="font-bold text-[9px] md:text-[13px]">---</p>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="grid grid-cols-3">
+                    <td class="p-0 border-r border-zinc-800">
+                        <div class="px-2 md:px-4 py-2">
+                            <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">Father Name</p>
+                            <p id="resFather" class="font-bold text-[9px] md:text-[13px] truncate">---</p>
+                        </div>
+                    </td>
+                    <td class="p-0 border-r border-zinc-800">
+                        <div class="px-2 md:px-4 py-2">
+                            <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">College Name</p>
+                            <p id="resCollege" class="font-bold text-[8px] md:text-[13px] leading-tight truncate">---</p>
+                        </div>
+                    </td>
+                    <td class="p-0">
+                        <div class="px-2 md:px-4 py-2">
+                            <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">Branch</p>
+                            <p id="resBranch" class="font-bold text-[9px] md:text-[13px] yellow-accent truncate">---</p>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
+    <div class="flex flex-col-reverse md:flex-row justify-between items-stretch md:items-center gap-3 no-print px-1">
+        <button onclick="handlePrint()" class="bg-yellow-accent text-black font-black px-6 py-3.5 rounded-xl text-[10px] uppercase tracking-widest shadow-lg flex items-center justify-center transition-transform active:scale-95">
+            <i class="fas fa-print mr-2"></i> Print Result
+        </button>
+        <select id="semesterSelect" class="bg-black border-2 border-yellow-500 text-yellow-400 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-widest focus:outline-none"></select>
+    </div>
 
-
-
-
-
-</div>
-
-                
-            </div>
-
-            <!-- Detailed Table -->
-            <div class="bg-zinc-900/30 border border-zinc-800 rounded-2xl overflow-hidden animate-reveal shadow-2xl result-card" style="animation-delay: 0.4s">
-                <div class="bg-zinc-800/40 px-6 py-4 border-b border-zinc-800/50 flex justify-between items-center">
-                    <div class="flex flex-col">
-                        <h3 class="font-black uppercase tracking-[0.1em] text-[11px] text-zinc-200">B.Tech JNTUH Result</h3>
-                        <p class="text-[9px] text-zinc-500 font-bold uppercase tracking-widest mt-0.5">Regular / Supply Examination Grade Report</p>
-                    </div>
-                    
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
-                        <thead>
-                            <tr class="text-zinc-500 text-[10px] uppercase font-black border-b border-zinc-800/50 bg-black/40">
-                                <th class="px-6 py-4 tracking-widest">Subject Code</th>
-                                <th class="px-6 py-4 tracking-widest">Subject Name</th>
-                                <th class="px-6 py-4 text-center tracking-widest">Int</th>
-                                <th class="px-6 py-4 text-center tracking-widest">Ext</th>
-                                <th class="px-6 py-4 text-center tracking-widest">Total</th>
-                                <th class="px-6 py-4 text-center tracking-widest">Grade</th>
-                                <th class="px-6 py-4 text-center tracking-widest">Credits</th>
-                            </tr>
-                        </thead>
-                        <tbody id="resultTableBody" class="text-[12px]">
-                            <!-- Rows injected by JS -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="px-6 py-6 bg-black/40 border-t border-zinc-800/50 flex justify-between items-center">
-                    
-                </div>
-            </div>
-
-            <div class="mt-10 flex items-center justify-center btn-print animate-reveal" style="animation-delay: 0.5s">
-                <button onclick="window.print()" class="group flex items-center space-x-3 bg-yellow-accent hover:bg-yellow-400 border border-yellow-accent px-12 py-4 rounded-xl text-xs font-black transition-all text-black shadow-[0_0_30px_rgba(255,215,0,0.2)] uppercase tracking-widest">
-                    <i class="fas fa-print"></i>
-                    <span>Print Result</span>
-                </button>
-            </div>
+    <div class="table-wrapper overflow-hidden rounded-xl border border-zinc-800 shadow-2xl">
+        <div class="overflow-x-auto">
+            <table class="boxed-table w-full min-w-[650px] md:min-w-full">
+                <thead>
+                    <tr class="bg-zinc-900/50 text-zinc-400 text-[9px] md:text-[10px] uppercase tracking-widest">
+                        <th class="px-3 md:px-4 py-3 border border-zinc-800">Sub Code</th>
+                        <th class="px-3 md:px-4 py-3 border border-zinc-800 text-left">Subject Name</th>
+                        <th class="px-2 md:px-4 py-3 border border-zinc-800 text-center">Int</th>
+                        <th class="px-2 md:px-4 py-3 border border-zinc-800 text-center">Ext</th>
+                        <th class="px-2 md:px-4 py-3 border border-zinc-800 text-center">Total</th>
+                        <th class="px-2 md:px-4 py-3 border border-zinc-800 text-center">Grade</th>
+                        <th class="px-2 md:px-4 py-3 border border-zinc-800 text-center">Cr</th>
+                    </tr>
+                </thead>
+                <tbody id="resultTableBody" class="text-[11px] md:text-[12px]"></tbody>
+            </table>
         </div>
+    </div>
+</div>
 
     </main>
 
-    <!-- Footer -->
     <!-- Footer -->
 <footer class="bg-black border-t border-zinc-900 pt-10 pb-5 px-6 relative">
 <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
@@ -638,12 +330,11 @@
   <div class="max-w-7xl mx-auto border-t border-zinc-900/50 pt-4
               flex flex-col md:flex-row justify-between items-center
               text-[9px] font-black text-zinc-700 uppercase tracking-[0.3em]">
-    <p>Developed by<span class="text-green-600">Narendra Yenagandula</span></p>
+    <p>System Status: <span class="text-green-600">Online</span></p>
     <p>© 2025 Backbenchers</p>
   </div>
 
-  <!-- SOCIAL POPUP -->
-  <!-- SOCIAL POPUP -->
+
     <!-- SOCIAL POPUP -->
 <div id="socialPopup"
      class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999]
@@ -682,541 +373,11 @@
 
   </div>
 </div>
-
-
   </div>
   
 </footer>
-<script>
 
-const SOCIAL_DATA = {
-  instagram: {
-    title: "INSTAGRAM",
-    color: "bg-pink-500",
-    icon: '<i class="fab fa-instagram text-white text-2xl"></i>',
-    users: [
-      { name: "Narendra Yenagandula", url: "https://instagram.com/narendra_yenagandula" },
-      { name: "Madhan Myana", url: "https://btech-notes.vercel.app/insta.html" }
-    ]
-  },
-  github: {
-    title: "GITHUB",
-    color: "bg-black",
-    icon: '<i class="fab fa-github text-white text-2xl"></i>',
-    users: [
-      { name: "Narendra Yenagandula", url: "https://github.com/Narendra2904" },
-      { name: "Madhan Myana", url: "https://github.com/madhanmyana" }
-    ]
-  },
-  linkedin: {
-    title: "LINKEDIN",
-    color: "bg-blue-600",
-    icon: '<i class="fab fa-linkedin-in text-white text-2xl"></i>',
-    users: [
-      { name: "Narendra Yenagandula", url: "https://www.linkedin.com/in/narendra-yenagandula/" },
-      { name: "Madhan Myana", url: "https://www.linkedin.com/in/madhan-myana-7ab90a335/" }
-    ]
-  }
-};
-
-function openPopup(type) {
-  const popup = document.getElementById("socialPopup");
-  const title = document.getElementById("popupTitle");
-  const iconBox = document.getElementById("popupIcon");
-  const usersBox = document.getElementById("popupUsers");
-
-  const data = SOCIAL_DATA[type];
-  if (!data) return;
-
-  title.innerText = data.title;
-  iconBox.className = `w-14 h-14 flex items-center justify-center mb-4 ${data.color}`;
-  iconBox.innerHTML = data.icon;
-
-  usersBox.innerHTML = "";
-  data.users.forEach(u => {
-    const a = document.createElement("a");
-    a.href = u.url;
-    a.target = "_blank";
-    a.className =
-      "flex justify-between items-center border border-black px-4 py-3 font-bold hover:bg-black hover:text-white transition";
-    a.innerHTML = `<span>${u.name}</span><span>→</span>`;
-    usersBox.appendChild(a);
-  });
-
-  popup.classList.remove("hidden");
-}
-
-function closePopup() {
-  document.getElementById("socialPopup").classList.add("hidden");
-}
-
-// click outside popup to close
-document.getElementById("socialPopup")
-  .addEventListener("click", e => {
-    if (e.target.id === "socialPopup") closePopup();
-  });
-</script>
-
-
-<style>
-.social-btn {
-  width: 44px;
-  height: 44px;
-  border: 1px solid #27272a;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #a1a1aa;
-  font-size: 16px;
-  transition: all 0.3s ease;
-}
-.social-btn:hover {
-  background: #FFD700;
-  color: #000;
-  border-color: #FFD700;
-  transform: translateY(-4px);
-}
-</style>
-
-
-
-    
-    <script>
-function toggleMobileMenu() {
-  const menu = document.getElementById("mobileMenu");
-  menu.classList.toggle("hidden");
-}
-</script>
-
-        <script>
-
-
-
-function calculateCGPA(semesters) {
-    let totalCredits = 0;
-    let totalPoints = 0;
-
-    semesters.forEach(sem => {
-        sem.subjects.forEach(sub => {
-            const gp = GRADE_POINTS[sub.grade] ?? 0;
-            const credits = parseFloat(sub.credits || 0);
-            totalCredits += credits;
-            totalPoints += gp * credits;
-        });
-    });
-
-    return totalCredits === 0 ? "0.00" : (totalPoints / totalCredits).toFixed(2);
-}
-
-
-
-/* ---------- Spotlight ---------- */
-document.addEventListener("mousemove", e => {
-    const s = document.getElementById("spotlight");
-    s.style.setProperty("--x", e.clientX + "px");
-    s.style.setProperty("--y", e.clientY + "px");
-});
-
-/* ---------- Greeting ---------- */
-window.onload = () => {
-    const g = document.getElementById("timeGreeting");
-    const h = new Date().getHours();
-    g.innerText =
-        h < 12 ? "— Good Morning  Bro—" :
-        h < 17 ? "— Good Afternoon Bro—" :
-                 "— Good Evening Bro—";
-    g.classList.remove("opacity-0");
-};
-
-/* ---------- Helpers ---------- */
-function countUp(id, end) {
-    const el = document.getElementById(id);
-    const start = performance.now();
-    const dur = 1200;
-
-    function tick(t) {
-        const p = Math.min((t - start) / dur, 1);
-        el.innerText = (p * end).toFixed(2);
-        if (p < 1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-}
-
-function createBurst() {
-    const box = document.getElementById("burst-container");
-    const icons = ["🔥","✨","🎓","⚡","✅"];
-    for (let i = 0; i < 15; i++) {
-        const d = document.createElement("div");
-        d.className = "particle";
-        d.innerText = icons[Math.floor(Math.random()*icons.length)];
-        d.style.left = "50%";
-        d.style.top = "50%";
-        d.style.setProperty("--tx",(Math.random()*400-200)+"px");
-        d.style.setProperty("--ty",(Math.random()*400-200)+"px");
-        box.appendChild(d);
-        setTimeout(()=>d.remove(),1000);
-    }
-}
-
-/* ---------- Render Result ---------- */
-function displayResult(data) {
-    document.getElementById("resName").innerText = data.name;
-    document.getElementById("resRoll").innerText = data.roll;
-
-    countUp("resCgpa", data.cgpa || 0);
-    countUp("resSgpa", data.sgpa || 0);
-
-    const tbody = document.getElementById("resultTableBody");
-    tbody.innerHTML = "";
-
-    data.subjects.forEach((s, i) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td class="px-6 py-4 text-[10px] text-zinc-500">${s.code}</td>
-            <td class="px-6 py-4 font-bold">${s.name}</td>
-            <td class="px-6 py-4 text-center">${s.internal}</td>
-            <td class="px-6 py-4 text-center">${s.external}</td>
-            <td class="px-6 py-4 text-center">${s.internal + s.external}</td>
-            <td class="px-6 py-4 text-center">
-                <span class="grade-badge">${s.grade}</span>
-            </td>
-            <td class="px-6 py-4 text-center">${s.credits}</td>
-        `;
-        tbody.appendChild(tr);
-    });
-
-    document.getElementById("resultContainer").classList.remove("hidden");
-}
-
-/* ================= GLOBAL STATE ================= */
-
-let FULL_RESULT = null;
-let CURRENT_VIEW = "all";
-
-const GRADE_POINTS = {
-  "O": 10,
-  "A+": 9,
-  "A": 8,
-  "B+": 7,
-  "B": 6,
-  "C": 5,
-  "D": 4,
-  "F": 0,
-  "S": 0
-};
-
-/* ================= MARK SUPPLY ================= */
-/* Same subject again in same semester → SUPPLY */
-
-function markSupplySubjects(semesters) {
-  const seen = new Map();
-
-  semesters.forEach(sem => {
-    sem.subjects.forEach(sub => {
-      const key = `${sem.semester}_${sub.subjectCode}`;
-
-      if (!seen.has(key)) {
-        seen.set(key, true);
-        sub.attempt = "regular";
-      } else {
-        sub.attempt = "supply";
-      }
-    });
-  });
-}
-
-/* ================= SEARCH ================= */
-
-async function searchResult() {
-  const htno = document.getElementById("hallTicketInput").value.trim().toUpperCase();
-  const errorMsg = document.getElementById("errorMsg");
-  const errorText = document.getElementById("errorText");
-  const loading = document.getElementById("loadingState");
-  const resultBox = document.getElementById("resultContainer");
-
-  errorMsg.classList.add("hidden");
-  resultBox.classList.add("hidden");
-
-  if (!htno) {
-    errorText.innerText = "Enter Hall Ticket Number";
-    errorMsg.classList.remove("hidden");
-    return;
-  }
-
-  loading.classList.remove("hidden");
-
-  try {
-    const API_BASE = "https://jntuh-backend-7rad.onrender.com";
-
-const res = await fetch(`${API_BASE}/result/${htno}`);
-
-    const json = await res.json();
-
-    FULL_RESULT = json.data;
-    if (!FULL_RESULT || !FULL_RESULT.semesters?.length) {
-      throw new Error("No results");
-    }
-
-    // 🔥 Mark supply properly
-    markSupplySubjects(FULL_RESULT.semesters);
-
-    // Header info
-    document.getElementById("resName").innerText = FULL_RESULT.name;
-    document.getElementById("resRoll").innerText = FULL_RESULT.hallTicket;
-
-    /* ================= DROPDOWN ================= */
-
-    const semSelect = document.getElementById("semesterSelect");
-    semSelect.innerHTML = "";
-
-    const allOpt = document.createElement("option");
-    allOpt.value = "all";
-    allOpt.textContent = "ALL SEMESTERS";
-    semSelect.appendChild(allOpt);
-
-    FULL_RESULT.semesters.forEach((s, i) => {
-  const opt = document.createElement("option");
-  opt.value = i;
-  opt.textContent = `SEMESTER ${s.semester}`;
-  semSelect.appendChild(opt);
-});
-
-
-    semSelect.onchange = () => {
-      CURRENT_VIEW = semSelect.value;
-      renderResult(CURRENT_VIEW);
-    };
-
-    CURRENT_VIEW = "all";
-    renderResult("all");
-
-    loading.classList.add("hidden");
-    resultBox.classList.remove("hidden");
-
-  } catch (err) {
-    console.error(err);
-    loading.classList.add("hidden");
-    errorText.innerText = "Result not found";
-    errorMsg.classList.remove("hidden");
-  }
-}
-
-/* ================= GPA ================= */
-
-function calculateSGPA(subjects) {
-  let credits = 0;
-  let points = 0;
-
-  subjects.forEach(sub => {
-    const gp = GRADE_POINTS[sub.grade] ?? 0;
-    const cr = parseFloat(sub.credits || 0);
-    credits += cr;
-    points += gp * cr;
-  });
-
-  return credits === 0 ? "0.00" : (points / credits).toFixed(2);
-}
-
-function calculateCGPA(semesters) {
-  let credits = 0;
-  let points = 0;
-
-  semesters.forEach(sem => {
-    sem.subjects.forEach(sub => {
-      const gp = GRADE_POINTS[sub.grade] ?? 0;
-      const cr = parseFloat(sub.credits || 0);
-      credits += cr;
-      points += gp * cr;
-    });
-  });
-
-  return credits === 0 ? "0.00" : (points / credits).toFixed(2);
-}
-
-/* ================= RENDER ================= */
-
-function renderResult(mode) {
-  const tbody = document.getElementById("resultTableBody");
-  tbody.innerHTML = "";
-
-  if (mode === "all") {
-    FULL_RESULT.semesters.forEach(sem => renderSemester(sem));
-    addOverallCGPA();
-  } else {
-    renderSemester(FULL_RESULT.semesters[Number(mode)]);
-  }
-}
-
-/* ================= SEMESTER ================= */
-
-function renderSemester(sem) {
-  addSemesterHeader(sem.semester);
-
-  const regularSubjects = sem.subjects.filter(s => s.attempt === "regular");
-  const supplySubjects  = sem.subjects.filter(s => s.attempt === "supply");
-
-  // REGULAR
-  if (regularSubjects.length > 0) {
-    addSubHeader("REGULAR RESULTS");
-    regularSubjects.forEach(addRow);
-    addSGPARow(calculateSGPA(regularSubjects));
-  }
-
-  // SUPPLY
-  if (supplySubjects.length > 0) {
-    addSubHeader("SUPPLY RESULTS");
-    supplySubjects.forEach(addRow);
-    addSGPARow(calculateSGPA(supplySubjects));
-  }
-}
-
-/* ================= TABLE HELPERS ================= */
-
-function addSemesterHeader(semName) {
-  const tbody = document.getElementById("resultTableBody");
-  const tr = document.createElement("tr");
-  tr.innerHTML = `
-    <td colspan="7"
-      class="bg-zinc-900 text-yellow-400 font-extrabold px-6 py-3 tracking-widest">
-      SEMESTER ${semName}
-    </td>
-  `;
-  tbody.appendChild(tr);
-}
-
-function addSubHeader(title) {
-  const tbody = document.getElementById("resultTableBody");
-  const tr = document.createElement("tr");
-  tr.innerHTML = `
-    <td colspan="7"
-      class="bg-black text-orange-400 font-bold px-6 py-2 uppercase tracking-widest">
-      ${title}
-    </td>
-  `;
-  tbody.appendChild(tr);
-}
-
-function addRow(sub) {
-  const tbody = document.getElementById("resultTableBody");
-  const tr = document.createElement("tr");
-
-  const supplyBadge =
-    sub.attempt === "supply"
-      ? `<span
-           class="ml-2 inline-flex items-center gap-1
-           text-[10px] px-2 py-0.5 rounded-full
-           bg-orange-500/15 text-orange-400
-           border border-orange-500/40 font-black tracking-wider">
-           <i class="fas fa-rotate"></i> SUPPLY
-         </span>`
-      : "";
-
-  tr.innerHTML = `
-    <td class="px-6 py-3">${sub.subjectCode}</td>
-    <td class="px-6 py-3">${sub.subjectName}</td>
-    <td class="px-6 py-3 text-center">${sub.internal}</td>
-    <td class="px-6 py-3 text-center">${sub.external}</td>
-    <td class="px-6 py-3 text-center">${sub.total}</td>
-    <td class="px-6 py-3 text-center font-bold">
-      ${sub.grade} ${supplyBadge}
-    </td>
-    <td class="px-6 py-3 text-center">${sub.credits}</td>
-  `;
-  tbody.appendChild(tr);
-}
-
-function addSGPARow(sgpa) {
-  const tbody = document.getElementById("resultTableBody");
-  const tr = document.createElement("tr");
-  tr.innerHTML = `
-    <td colspan="7"
-      class="text-right bg-black font-bold text-green-400 px-6 py-3">
-      SGPA : ${sgpa}
-    </td>
-  `;
-  tbody.appendChild(tr);
-}
-
-function addOverallCGPA() {
-  const tbody = document.getElementById("resultTableBody");
-  const tr = document.createElement("tr");
-  tr.innerHTML = `
-    <td colspan="7"
-      class="text-right bg-zinc-950 font-extrabold text-yellow-400 px-6 py-4">
-      OVERALL CGPA : ${calculateCGPA(FULL_RESULT.semesters)}
-    </td>
-  `;
-  tbody.appendChild(tr);
-}
-
-
-
-/* ================= ENTER KEY ================= */
-
-document.getElementById("hallTicketInput")
-  ?.addEventListener("keydown", e => {
-    if (e.key === "Enter") searchResult();
-  });
-</script>
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-
-<script>
-(function(){
-  emailjs.init("5kLoGgKCRJnViVqjs"); // 
-})();
-
-
-function sendFeedback() {
-  const msgInput = document.getElementById("feedbackMessage");
-  const btn = document.getElementById("feedbackBtn");
-  const status = document.getElementById("feedbackStatus");
-
-  const msg = msgInput.value.trim();
-  if (!msg) return;
-
-  // UI: sending
-  btn.innerText = "SENDING...";
-  btn.disabled = true;
-  btn.classList.add("opacity-60", "cursor-not-allowed");
-
-  emailjs.send("service_sh3psxo", "template_pdu1usd", {
-    from_name: "Backbenchers User",
-    from_email: "no-reply@backbenchers",
-    message: msg
-  })
-  .then(() => {
-    // SUCCESS UI
-    status.classList.remove("hidden");
-    msgInput.value = "";
-
-    btn.innerText = "SENT ✓";
-
-    // reset after 3 sec
-    setTimeout(() => {
-      btn.innerText = "SEND";
-      btn.disabled = false;
-      btn.classList.remove("opacity-60", "cursor-not-allowed");
-      status.classList.add("hidden");
-    }, 3000);
-  })
-  .catch(err => {
-    console.error(err);
-    btn.innerText = "FAILED";
-    btn.disabled = false;
-  });
-}
-</script>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-2WWBG5GD2Q"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-2WWBG5GD2Q');
-</script>
-
-
+    <script src="script.js"></script>
 </body>
 </html>
