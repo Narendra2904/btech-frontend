@@ -782,7 +782,7 @@ async function searchResult() {
     loading.classList.remove("hidden");
 
     try {
-        const API_BASE = "https://jntuh-backend-7rad.onrender.com";
+        const API_BASE = "http://127.0.0.1:8000";
         const res = await fetch(`${API_BASE}/result/${htno}`);
         const json = await res.json();
 
@@ -937,11 +937,32 @@ function addSemesterHeader(semName) {
 function addSubHeader(title, examCode = "", attemptNum = "") {
   const tbody = document.getElementById("resultTableBody");
   const tr = document.createElement("tr");
-  const attempt = attemptNum ? `<span class="ml-2 bg-zinc-800 text-[9px] px-2 py-0.5 rounded border border-zinc-700 text-zinc-400">ATTEMPT: ${attemptNum}</span>` : "";
-  const code = examCode ? `<span class="ml-3 text-[9px] text-zinc-500">[CODE: ${examCode}]</span>` : "";
   
-  tr.innerHTML = `<td colspan="7" class="bg-black text-orange-400 font-bold px-4 md:px-6 py-2 uppercase text-[10px] md:text-[11px] border border-zinc-800">
-    <div class="flex items-center"><span>${title}${attempt}${code}</span></div></td>`;
+  // Badge styling for attempt and exam code
+  const attemptHtml = attemptNum ? `<span class="ml-2 bg-zinc-800 text-[8px] md:text-[9px] px-2 py-0.5 rounded border border-zinc-700 text-zinc-400 font-mono">ATTEMPT: ${attemptNum}</span>` : "";
+  const codeHtml = examCode ? `<span class="ml-2 md:ml-3 text-[8px] md:text-[9px] text-zinc-500 font-mono">[CODE: ${examCode}]</span>` : "";
+  
+  let officialLink = "";
+  if (examCode && FULL_RESULT && FULL_RESULT.hallTicket) {
+      // Official JNTUH result URL construction
+      const baseUrl = "http://results.jntuh.ac.in/results/resultAction";
+      const params = `?degree=btech&examCode=${examCode}&etype=r17&result=null&grad=null&type=intgrade&htno=${FULL_RESULT.hallTicket}`;
+      
+      // "no-print" class ensures this disappears in the PDF print
+      officialLink = `
+        <a href="${baseUrl}${params}" target="_blank" 
+           class="no-print ml-auto text-[8px] md:text-[9px] bg-yellow-accent/10 hover:bg-yellow-accent/20 text-yellow-accent border border-yellow-accent/30 px-2 py-1 rounded transition-all flex items-center gap-1">
+           <i class="fas fa-external-link-alt text-[7px]"></i> OFFICIAL RESULT
+        </a>`;
+  }
+  
+  tr.innerHTML = `
+    <td colspan="7" class="bg-black text-orange-400 font-bold px-4 py-2 uppercase tracking-widest text-[9px] md:text-[11px]">
+      <div class="flex items-center justify-between md:justify-start">
+        <span class="truncate">${title}${attemptHtml}${codeHtml}</span>
+        ${officialLink}
+      </div>
+    </td>`;
   tbody.appendChild(tr);
 }
 
@@ -983,27 +1004,6 @@ function handlePrint() {
     setTimeout(() => { document.title = originalTitle; }, 100);
 }
 
-/* ================= MOBILE SWIPE ================= */
-
-let touchStartX = 0;
-
-document.addEventListener("touchstart", e => {
-  touchStartX = e.changedTouches[0].screenX;
-});
-
-document.addEventListener("touchend", e => {
-  const diff = e.changedTouches[0].screenX - touchStartX;
-  const select = document.getElementById("semesterSelect");
-  if (!select || Math.abs(diff) < 50) return;
-
-  if (diff < 0 && select.selectedIndex < select.options.length - 1)
-    select.selectedIndex++;
-  if (diff > 0 && select.selectedIndex > 0)
-    select.selectedIndex--;
-
-  CURRENT_VIEW = select.value;
-  renderResult(CURRENT_VIEW);
-});
 
 /* ================= ENTER KEY ================= */
 
