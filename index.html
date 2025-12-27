@@ -1081,7 +1081,62 @@ function handlePrint() {
     }, 100);
 }
 </script>
+<div id="app-download-notification" 
+     style="display: none; z-index: 9999;" 
+     class="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:max-w-md animate-reveal">
+    
+    <div class="bg-zinc-900 border-2 border-yellow-accent p-4 rounded-2xl shadow-[0_0_30px_rgba(255,215,0,0.15)] flex items-center gap-4 relative overflow-hidden">
+        <div class="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white/5 opacity-40 group-hover:animate-shine"></div>
 
+        <button type="button" 
+                onclick="window.closeAppNotification()" 
+                class="absolute top-2 right-2 text-zinc-500 hover:text-yellow-accent transition-colors p-1 z-50">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div class="bg-yellow-accent/10 border border-yellow-accent/30 w-12 h-12 rounded-xl flex items-center justify-center shrink-0">
+            <i class="fas fa-mobile-alt text-yellow-accent text-xl"></i>
+        </div>
+
+        <div class="flex-grow pr-4">
+            <h4 class="font-black text-xs uppercase tracking-widest text-yellow-accent leading-none">Download Android App</h4>
+            <p class="text-[10px] text-zinc-400 font-bold mt-1 leading-tight">Get your results and notes even faster with our native app.</p>
+        </div>
+
+        <a href="https://expo.dev/artifacts/eas/hUXNz5RPAG1R9Wc8K8geDb.apk" 
+           class="bg-yellow-accent hover:bg-yellow-400 text-black font-black px-4 py-2 rounded-lg text-[9px] uppercase tracking-widest transition-all active:scale-95 shadow-lg flex items-center gap-2">
+            Get <i class="fas fa-download text-[8px]"></i>
+        </a>
+    </div>
+</div>
+<script>
+  // Global function to close the notification
+  window.closeAppNotification = function() {
+    const banner = document.getElementById('app-download-notification');
+    if (banner) {
+      banner.style.display = 'none';
+      // Save user preference so it doesn't show again
+      localStorage.setItem('app_result_banner_v1', 'hidden');
+    }
+  };
+
+  // Global function to show the notification
+  window.initAppNotification = function() {
+    const banner = document.getElementById('app-download-notification');
+    const status = localStorage.getItem('app_result_banner_v1');
+
+    // Show only if user hasn't hidden it before
+    if (banner && status !== 'hidden') {
+      banner.style.display = 'block';
+      console.log("App notification initialized");
+    }
+  };
+
+  // Run the notification after 3 seconds so user can see their results first
+  window.addEventListener('load', () => {
+    setTimeout(window.initAppNotification, 3000);
+  });
+</script>
 
 </body>
 </html>
