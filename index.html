@@ -979,17 +979,30 @@ function addSubHeader(title, examCode = "", attemptNum = "") {
 }
 
 function addRow(sub) {
-  const tbody = document.getElementById("resultTableBody");
-  const tr = document.createElement("tr");
-  tr.innerHTML = `
-    <td class="px-2 md:px-6 py-3 border border-zinc-800 font-mono text-zinc-400 text-[9px] md:text-[12px]">${sub.subjectCode}</td>
-    <td class="px-2 md:px-6 py-3 border border-zinc-800 font-medium text-[9px] md:text-[12px]">${sub.subjectName}</td>
-    <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px]">${sub.internal}</td>
-    <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px]">${sub.external}</td>
-    <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px]">${sub.total}</td>
-    <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center font-bold text-[9px] md:text-[12px]">${sub.grade}</td>
-    <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px]">${sub.credits}</td>`;
-  tbody.appendChild(tr);
+    const tbody = document.getElementById("resultTableBody");
+    const tr = document.createElement("tr");
+    
+    // Determine if the subject is a fail
+    // Usually "F" is Fail, "S" is Absent/Fail in JNTUH systems
+    const isFailed = sub.grade === "F" || sub.grade === "S";
+    
+    // Apply a red background tint and red text if failed
+    // We use Tailwind classes: bg-red-900/20 (tint) and text-red-400 (bright red text)
+    const failClass = isFailed ? "bg-red-900/20 text-red-400" : "";
+    const gradeBadgeClass = isFailed ? "text-red-500 font-black" : "text-zinc-200";
+
+    tr.className = `${failClass} transition-colors duration-300`;
+    
+    tr.innerHTML = `
+        <td class="px-2 md:px-6 py-3 border border-zinc-800 font-mono text-[9px] md:text-[12px] ${isFailed ? 'text-red-400/70' : 'text-zinc-400'}">${sub.subjectCode}</td>
+        <td class="px-2 md:px-6 py-3 border border-zinc-800 font-medium text-[9px] md:text-[12px]">${sub.subjectName}</td>
+        <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px]">${sub.internal}</td>
+        <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px]">${sub.external}</td>
+        <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px] font-bold">${sub.total}</td>
+        <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center font-black text-[9px] md:text-[12px] ${gradeBadgeClass}">${sub.grade}</td>
+        <td class="px-1 md:px-4 py-3 border border-zinc-800 text-center text-[9px] md:text-[12px]">${sub.credits}</td>`;
+    
+    tbody.appendChild(tr);
 }
 
 function addSGPARow(sgpa) {
