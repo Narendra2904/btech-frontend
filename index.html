@@ -14,6 +14,43 @@
         :root {
             --accent: #FFD700;
         }
+        /* Page Transition: Slide Up and Fade In */
+@keyframes pageSlideIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(30px); 
+        filter: blur(10px);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0);
+        filter: blur(0);
+    }
+}
+
+/* Apply to the body so the entire layout slides together */
+body {
+    animation: pageSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Smooth Navigation Underline effect for Desktop Menu */
+.nav-link {
+    position: relative;
+    padding-bottom: 4px;
+}
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--accent);
+    transition: width 0.3s ease;
+}
+.nav-link:hover::after {
+    width: 100%;
+}
 
         body {
             font-family: 'Inter', sans-serif;
@@ -202,12 +239,11 @@
 
     <!-- Desktop Menu -->
     <div class="hidden md:flex items-center space-x-8 font-semibold text-[11px] uppercase tracking-widest text-zinc-500">
-      <a href="https://btech-notes.vercel.app" class="hover:text-yellow-accent">Notes</a>
-            <a href="#" class="text-yellow-accent border-b-2 border-yellow-accent pb-1">Home</a>
-        
-    <a href="backlog.html" class="hover:text-yellow-accent">Active Backlog Report</a>
-      <a href="https://btech-notes.vercel.app/movie.html" class="hover:text-yellow-accent">Movies</a>
-    </div>
+    <a href="https://btech-notes.vercel.app" class="nav-link hover:text-yellow-accent">Notes</a>
+    <a href="#" class="text-yellow-accent border-b-2 border-yellow-accent pb-1">Home</a>
+    <a href="backlog.html" class="nav-link hover:text-yellow-accent">Active Backlog Report</a>
+    <a href="https://btech-notes.vercel.app/movie.html" class="nav-link hover:text-yellow-accent">Movies</a>
+</div>
 
     <!-- Right Side -->
     <div class="flex items-center gap-4">
@@ -1222,7 +1258,17 @@ function handlePrint() {
   window.addEventListener('load', () => {
     setTimeout(window.initAppNotification, 3000);
   });
-
+document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        // If it's an internal link (Home or Backlog)
+        if (this.getAttribute('href').endsWith('.html')) {
+            const loader = document.getElementById('loadingProgress');
+            if (loader) {
+                loader.style.width = '100%'; // Trigger the yellow bar at the top
+            }
+        }
+    });
+});
 
     </script>
 </body>
