@@ -538,23 +538,16 @@ document.getElementById("hallTicketInput")
 
 /* ---------- FEEDBACK LOGIC (WEB3FORMS) ---------- */
 async function sendFeedback() {
-    const nameInput = document.getElementById("feedbackName"); // Capture Name Input
+    const nameInput = document.getElementById("userName"); // Select the name input
     const msgInput = document.getElementById("feedbackMessage");
     const btn = document.getElementById("feedbackBtn");
-    const status = document.getElementById("feedbackStatus");
-    const rollNo = document.getElementById("resRoll").innerText;
-
-    const name = nameInput.value.trim();
+    
+    const name = nameInput.value.trim() || "Anonymous"; // Fallback if empty
     const msg = msgInput.value.trim();
 
-    // Validation: Ensure name is provided
-    if (!name || !msg) {
-        alert("Please enter both name and feedback");
-        return;
-    }
+    if (!msg) return;
 
     btn.innerText = "SENDING...";
-    btn.disabled = true;
 
     try {
         const response = await fetch("https://api.web3forms.com/submit", {
@@ -563,34 +556,22 @@ async function sendFeedback() {
                 "Content-Type": "application/json",
                 Accept: "application/json",
             },
-           body: JSON.stringify({
-    access_key: "...",
-    subject: `New Feedback from ${name}`,
-    from_name: name,
-    name: name,
-    message: `Sender: ${name}\nFeedback: ${msg}`, // forces name inside email body
-    hall_ticket: rollNo
-})
-,
+            body: JSON.stringify({
+                access_key: "a97eb536-0fc7-4209-96ff-cc48e11fe234",
+                subject: `Feedback from ${name}`, // 👈 THIS UPDATES THE EMAIL SUBJECT
+                from_name: name,                  // 👈 THIS UPDATES THE SENDER NAME
+                name: name,
+                message: msg
+            }),
         });
 
-        const result = await response.json();
-
-        if (result.success) {
-            status.classList.remove("hidden");
-            status.innerText = "✅ Feedback Sent";
-            msgInput.value = "";
-            nameInput.value = ""; // Clear name field
+        if (response.ok) {
             btn.innerText = "SENT ✓";
+            nameInput.value = "";
+            msgInput.value = "";
         }
     } catch (err) {
         btn.innerText = "FAILED";
-    } finally {
-        setTimeout(() => {
-            btn.innerText = "SEND";
-            btn.disabled = false;
-            status.classList.add("hidden");
-        }, 3000);
     }
 }
 
@@ -1298,6 +1279,7 @@ async function sendFeedback() {
         }
     });
 });
+
 
 
 
