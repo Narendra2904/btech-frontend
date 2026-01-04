@@ -5,7 +5,7 @@ const SOCIAL_DATA = {
     icon: '<i class="fab fa-instagram text-white text-2xl"></i>',
     users: [
       { name: "Narendra Yenagandula", url: "https://instagram.com/narendra_yenagandula" },
-      { name: "Madhan Myana", url: "https://btech-notes.vercel.app/insta.html" }
+      { name: "Madhan Myana", url: "https://instagram.com/madhan.myana" }
     ]
   },
   github: {
@@ -1301,4 +1301,5 @@ async function sendFeedback() {
         }
     });
 });
+
 
