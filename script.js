@@ -1081,3 +1081,223 @@ function handleComparePrint() {
         }
     });
 });
+
+
+
+//=========Backlog Checker Logic=========
+/* ================= ENTER KEY LISTENER ================= */
+document.getElementById("hallTicketInput")?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        fetchBacklogReport(); // Triggers the search
+    }
+});
+
+      window.onload = () => {
+    const g = document.getElementById("timeGreeting");
+    const h = new Date().getHours();
+    g.innerText =
+        h < 12 ? "— Good Morning  Bro—" :
+        h < 17 ? "— Good Afternoon Bro—" :
+                 "— Good Evening Bro—";
+    g.classList.remove("opacity-0");
+};
+
+       
+
+
+async function sendFeedback() {
+    const msgInput = document.getElementById("feedbackMessage");
+    const btn = document.getElementById("feedbackBtn");
+    const status = document.getElementById("feedbackStatus");
+    
+    // Check if we have a Hall Ticket (some pages might not have it)
+    const rollNoElement = document.getElementById("resRoll");
+    const rollNo = rollNoElement ? rollNoElement.innerText : "Unknown/General";
+    const currentPage = window.location.pathname;
+
+    const msg = msgInput.value.trim();
+    if (!msg) {
+        alert("Please enter a message.");
+        return;
+    }
+
+    // UI Loading State
+    btn.innerText = "SENDING...";
+    btn.disabled = true;
+
+    try {
+        const response = await fetch("https://api.web3forms.com/submit", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+            body: JSON.stringify({
+                access_key: "1545353f-657c-49b8-8de7-d3224c4c4d40",
+                subject: `Feedback from ${rollNo}`,
+                from_name: "Backbenchers Portal",
+                message: msg,
+                hall_ticket: rollNo,
+                page_source: currentPage // This tells you which page they were on
+            }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            status.classList.remove("hidden");
+            status.innerText = "✅ Feedback Sent";
+            status.style.color = "#22c55e"; // Green
+            msgInput.value = "";
+            btn.innerText = "SENT ✓";
+        } else {
+            throw new Error("Failed");
+        }
+    } catch (err) {
+        status.classList.remove("hidden");
+        status.innerText = "❌ Error Sending";
+        status.style.color = "#ef4444"; // Red
+        btn.innerText = "FAILED";
+    } finally {
+        setTimeout(() => {
+            btn.innerText = "SEND";
+            btn.disabled = false;
+            status.classList.add("hidden");
+        }, 3000);
+    }
+}
+
+        // Interactive UI
+        document.addEventListener("mousemove", e => {
+            const s = document.getElementById("spotlight");
+            s.style.setProperty("--x", e.clientX + "px");
+            s.style.setProperty("--y", e.clientY + "px");
+        });
+
+        function toggleMobileMenu() { document.getElementById("mobileMenu").classList.toggle("hidden"); }
+
+        async function fetchBacklogReport() {
+            const ht = document.getElementById("hallTicketInput").value.trim().toUpperCase();
+            const loader = document.getElementById("loadingState");
+            const area = document.getElementById("reportArea");
+            const error = document.getElementById("errorMsg");
+
+            if (!ht) return;
+            error.classList.add("hidden"); area.classList.add("hidden"); loader.classList.remove("hidden");
+
+            try {
+                const res = await fetch(`https://jntuh-backend-7rad.onrender.com/result/${ht}`);
+                const json = await res.json();
+                if (!json.data) throw new Error("Roll Number not found.");
+
+                const data = typeof json.data === 'string' ? JSON.parse(json.data.replace(/'/g, '"')) : json.data;
+
+                // Student Info Mapping
+                document.getElementById("resName").innerText = data.name || "---";
+                document.getElementById("resFather").innerText = data.fatherName || "---";
+                document.getElementById("resBranch").innerText = data.branch || "---";
+                document.getElementById("resRoll").innerText = data.hallTicket || "---";
+                document.getElementById("resColCode").innerText = data.collegeCode || "---";
+                document.getElementById("resColName").innerText = data.college || "---";
+
+                // 🟢 Logic strictly from activeBacklogs.ts
+                const subjectMap = {};
+                data.semesters.forEach(sem => {
+                    sem.subjects.forEach(sub => {
+                        const code = sub.subjectCode;
+                        if (!subjectMap[code]) { subjectMap[code] = []; }
+                        subjectMap[code].push({ ...sub, semesterLabel: `SEM ${sem.semester}` });
+                    });
+                });
+
+                const backlogResult = {};
+                let total = 0;
+
+                Object.values(subjectMap).forEach(attempts => {
+                    // Logic: If passed at least once (grade !== "F") → NOT a backlog
+                    const hasPassed = attempts.some(sub => sub.grade && sub.grade !== "F");
+
+                    if (!hasPassed) {
+                        const lastAttempt = attempts[attempts.length - 1]; // Latest for display
+                        if (!backlogResult[lastAttempt.semesterLabel]) { 
+                            backlogResult[lastAttempt.semesterLabel] = []; 
+                        }
+                        backlogResult[lastAttempt.semesterLabel].push(lastAttempt);
+                        total++;
+                    }
+                });
+
+                document.getElementById("countBadge").innerText = `⚠️ ${total} Pending Subjects Found`;
+                renderSemesterTables(backlogResult);
+                
+                loader.classList.add("hidden"); 
+                area.classList.remove("hidden");
+            } catch (err) {
+                loader.classList.add("hidden"); 
+                error.innerText = err.message; 
+                error.classList.remove("hidden");
+            }
+        }
+
+        function renderSemesterTables(grouped) {
+            const container = document.getElementById("semesterTablesContainer");
+            container.innerHTML = "";
+            const sortedSems = Object.keys(grouped).sort();
+
+            if (sortedSems.length === 0) {
+                container.innerHTML = `<p class="text-center py-10 text-green-500 font-black uppercase tracking-widest">🎉 No Active Backlogs Detected</p>`;
+                return;
+            }
+
+            sortedSems.forEach(sem => {
+                const div = document.createElement("div");
+                div.innerHTML = `
+                    <h3 class="text-yellow-accent font-black text-xs mb-3 uppercase tracking-widest border-l-4 border-yellow-accent pl-2 sem-header">${sem}</h3>
+                    <div class="overflow-x-auto rounded-xl border border-zinc-800 sem-table">
+                        <table class="w-full text-left">
+                            <thead class="bg-zinc-900/50 text-zinc-400 text-[9px] uppercase">
+                                <tr>
+                                    <th class="px-4 py-3 border border-zinc-800">Code</th>
+                                    <th class="px-4 py-3 border border-zinc-800">Subject Name</th>
+                                    <th class="px-3 py-3 border border-zinc-800 text-center">Int</th>
+                                    <th class="px-3 py-3 border border-zinc-800 text-center">Ext</th>
+                                    <th class="px-3 py-3 border border-zinc-800 text-center">Tot</th>
+                                    <th class="px-3 py-3 border border-zinc-800 text-center">Gr</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-[11px]">
+                                ${grouped[sem].map(s => `
+                                    <tr class="border-b border-zinc-800/50">
+                                        <td class="px-4 py-3 border-r border-zinc-800 font-mono text-zinc-500">${s.subjectCode}</td>
+                                        <td class="px-4 py-3 border-r border-zinc-800 font-bold uppercase">${s.subjectName}</td>
+                                        <td class="px-3 py-3 border-r border-zinc-800 text-center">${s.internal || 0}</td>
+                                        <td class="px-3 py-3 border-r border-zinc-800 text-center">${s.external || 0}</td>
+                                        <td class="px-3 py-3 border-r border-zinc-800 text-center font-black">${(Number(s.internal)||0) + (Number(s.external)||0)}</td>
+                                        <td class="px-3 py-3 text-center text-red-500 font-black">${s.grade}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>`;
+                container.appendChild(div);
+            });
+        }
+
+        function handlePrint() {
+            const originalTitle = document.title;
+            const rollNo = document.getElementById("resRoll").innerText.trim();
+            if (rollNo && rollNo !== "---") { document.title = rollNo; }
+            window.print();
+            setTimeout(() => { document.title = originalTitle; }, 100);
+        }
+        document.querySelectorAll('nav a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        // If it's an internal link (Home or Backlog)
+        if (this.getAttribute('href').endsWith('.html')) {
+            const loader = document.getElementById('loadingProgress');
+            if (loader) {
+                loader.style.width = '100%'; // Trigger the yellow bar at the top
+            }
+        }
+    });
+});
