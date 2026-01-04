@@ -149,106 +149,58 @@ body {
 
      <!-- Header / Navbar -->
 <nav class="border-b border-zinc-800/60 bg-black/80 backdrop-blur-xl sticky top-0 z-50">
-  <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <div class="max-w-full lg:max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+        
+        <div class="flex items-center space-x-3 group cursor-pointer shrink-0" onclick="window.location.href='index.html'">
+            <img src="./assets/fav.png" alt="Backbenchers Logo" class="w-8 h-8 rounded-md transition-transform duration-300 group-hover:scale-110 shadow-md" />
+            <div class="bg-yellow-accent text-black font-black px-2 py-0.5 text-sm rounded-sm transition-transform duration-300 group-hover:-rotate-2">
+                BACK
+            </div>
+            <span class="font-extrabold text-lg tracking-tighter transition-colors duration-300 group-hover:text-yellow-accent">
+                BENCHERS
+            </span>
+        </div>
 
-    <!-- Brand -->
-    <div 
-  class="flex items-center space-x-3 group cursor-pointer"
-  onclick="location.reload()"
->
+        <div class="hidden md:flex flex-1 justify-center">
+            <div class="flex items-center space-x-4 lg:space-x-6 font-bold text-[10px] uppercase tracking-widest text-zinc-500">
+                <a href="index.html" class="nav-link hover:text-yellow-accent">Home</a>
+                <a href="result.html" class="nav-link hover:text-yellow-accent">All Results</a>
+                <a href="backlog.html" class="nav-link hover:text-yellow-accent border-b-2 border-yellow-accent pb-1">Backlog Report</a>
+                <a href="creditChecker.html" class="nav-link hover:text-yellow-accent">Credit Checker</a>
+                <a href="compare.html" class="nav-link hover:text-yellow-accent">Compare</a>
+                <a href="https://btech-notes.vercel.app" class="nav-link hover:text-yellow-accent">Notes</a>
+            </div>
+        </div>
 
-  <!-- LOGO IMAGE -->
-  <img
-    src="./assets/logo.jpg"
-    alt="Backbenchers Logo"
-    class="
-      w-8 h-8 
-      rounded-md 
-      transition-transform duration-300 
-      group-hover:scale-110 
-      group-hover:rotate-3
-      shadow-md
-    "
-  />
+        <div class="flex items-center md:hidden">
+            <button onclick="toggleMobileMenu()" class="text-yellow-accent text-2xl p-2 focus:outline-none hover:bg-zinc-900 rounded-lg transition-colors">
+                <i id="menuIcon" class="fas fa-bars"></i>
+            </button>
+        </div>
 
-  <!-- EXISTING BACK BADGE -->
-  <div
-    class="
-      bg-yellow-accent 
-      text-black 
-      font-black 
-      px-2 
-      py-0.5 
-      text-sm 
-      rounded-sm 
-      transition-transform duration-300
-      group-hover:-rotate-2
-    "
-  >
-    BACK
-  </div>
-
-  <!-- BENCHERS TEXT -->
-  <span
-    class="
-      font-extrabold 
-      text-lg 
-      tracking-tighter
-      transition-colors duration-300
-      group-hover:text-yellow-accent
-    "
-  >
-    BENCHERS
-  </span>
-</div>
-
-    <!-- Desktop Menu -->
-   <div class="hidden md:flex items-center space-x-8 font-semibold text-[11px] uppercase tracking-widest text-zinc-500">
-    <a href="https://btech-notes.vercel.app" class="nav-link hover:text-yellow-accent">Notes</a>
-    <a href="index.html" class="nav-link hover:text-yellow-accent">Home</a>
-    <a href="#" class="text-yellow-accent border-b-2 border-yellow-accent pb-1">Active Backlog Report</a>
-    <a href="https://btech-notes.vercel.app/movie.html" class="nav-link hover:text-yellow-accent">Movies</a>
-</div>
-
-    <!-- Right Side -->
-    <div class="flex items-center gap-4">
-
-      <!-- Print -->
-      
-
-      <!-- Status -->
-      <div class="hidden md:flex items-center gap-2 text-micro font-bold text-zinc-500
-                  bg-zinc-900/50 px-3 py-1.5 rounded-full border border-zinc-800/50">
-        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-        SERVER: ACTIVE
-      </div>
-
-      <!-- ☰ Mobile Hamburger -->
-      <button onclick="toggleMobileMenu()"
-        class="md:hidden text-yellow-accent text-2xl focus:outline-none">
-        <i class="fas fa-bars"></i>
-      </button>
+        <div class="hidden lg:flex items-center gap-2 text-micro font-bold text-zinc-500 bg-zinc-900/50 px-3 py-1.5 rounded-full border border-zinc-800/50">
+            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+            SERVER: ACTIVE
+        </div>
     </div>
-  </div>
 
-  <!-- Mobile Menu -->
-  <div id="mobileMenu"
-    class="md:hidden hidden bg-black border-t border-zinc-800 px-6 py-6 space-y-4
-           text-sm font-extrabold uppercase tracking-widest text-zinc-400">
-    <a href="https://btech-notes.vercel.app" class="block hover:text-yellow-accent">Notes</a>
-    
-      <a href="index.html" class="block hover:text-yellow-accent">Home</a>
-      <a href="#" class="block text-yellow-accent">Active Backlog Report</a>
-    <a href="https://btech-notes.vercel.app/movie.html" class="block hover:text-yellow-accent">Movies</a>
-
-    <div class="pt-4 border-t border-zinc-800 flex items-center gap-3 text-[10px]">
-      <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-      SERVER ACTIVE
+    <div id="mobileMenu" class="md:hidden hidden bg-black border-t border-zinc-800 absolute top-16 left-0 w-full z-50 px-6 py-8 space-y-6 shadow-2xl animate-reveal">
+        <a href="index.html" class="block text-yellow-accent font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-home mr-3"></i> Home</a>
+        <a href="result.html" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-search mr-3"></i> All Results</a>
+        <a href="backlog.html" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-exclamation-triangle mr-3"></i> Backlog Report</a>
+        <a href="creditChecker.html" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-award mr-3"></i> Credit Checker</a>
+        <a href="https://btech-notes.vercel.app" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2"><i class="fas fa-notes-medical mr-3"></i> Notes</a>
     </div>
-  </div>
 </nav>
 
     <main class="flex-grow max-w-5xl mx-auto w-full px-6 py-12">
+      <div class="mb-8 no-print">
+        <a href="index.html" 
+           class="inline-flex items-center gap-2 px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-xl text-zinc-400 text-[10px] font-black uppercase tracking-widest hover:border-yellow-accent hover:text-yellow-accent transition-all group">
+            <i class="fas fa-chevron-left text-[8px] group-hover:-translate-x-1 transition-transform"></i>
+            Back to dashboard
+        </a>
+    </div>
         <div class="text-center mb-10 search-section">
             <p id="timeGreeting" class="text-yellow-accent text-[10px] font-black uppercase tracking-[0.3em] mb-2 opacity-0 transition-opacity duration-1000">Good Day Bro</p>
             <h1 class="text-3xl md:text-4xl font-black heading-tight mb-3">JNTUH B.Tech<span class="yellow-accent">   Active Backlog Report</span></h1>
