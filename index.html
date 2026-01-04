@@ -181,32 +181,19 @@
     </div>
 
     <!-- FEEDBACK -->
-    <div>
-      <div class="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/60">
-        <h4 class="font-black text-[10px] uppercase tracking-[0.3em] mb-4 text-zinc-500">
-          Feedback
-        </h4>
-        <input
-        id="feedbackMessage"
-          type="text"
-          placeholder="Any issues?"
-          class="w-full bg-black border border-zinc-800 rounded-lg
-                 px-4 py-2.5 text-xs mb-3
-                 focus:border-yellow-accent outline-none"
-        />
-    <button
-  id="feedbackBtn"
-  onclick="sendFeedback()"
-  class="w-full bg-yellow-accent text-black font-black
-         py-2.5 rounded-lg text-[10px]
-         hover:bg-yellow-400 transition-all uppercase tracking-widest">
-  SEND
-</button>
+    <div class="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/60 max-w-sm mx-auto mt-10">
+  <h4 class="font-black text-[10px] uppercase tracking-[0.3em] mb-4 text-zinc-500">Feedback</h4>
 
-<p id="feedbackStatus"
-   class="hidden mt-3 text-[10px] font-black uppercase tracking-widest text-green-500 text-center">
-  ✅ Feedback Sent
-</p>
+  <input id="feedbackName" placeholder="Your Name" class="w-full bg-black border border-zinc-800 rounded-lg px-4 py-2.5 text-xs mb-3 focus:border-yellow-accent outline-none" />
+  <input id="feedbackEmail" type="email" placeholder="Your Email" class="w-full bg-black border border-zinc-800 rounded-lg px-4 py-2.5 text-xs mb-3 focus:border-yellow-accent outline-none" />
+  <textarea id="feedbackMessage" placeholder="Your Feedback" class="w-full bg-black border border-zinc-800 rounded-lg px-4 py-2.5 text-xs mb-3 focus:border-yellow-accent outline-none h-20"></textarea>
+
+  <button id="feedbackBtn" class="w-full bg-yellow-accent text-black font-black py-2.5 rounded-lg text-[10px] hover:bg-yellow-400 transition-all uppercase tracking-widest">
+    SEND
+  </button>
+
+  <p id="feedbackStatus" class="hidden mt-3 text-[10px] font-black uppercase tracking-widest text-green-500 text-center"></p>
+</div>
 
 
       </div>
