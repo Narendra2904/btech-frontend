@@ -539,12 +539,18 @@ document.getElementById("hallTicketInput")
 /* ---------- FEEDBACK LOGIC (WEB3FORMS) ---------- */
 async function sendFeedback() {
     const msgInput = document.getElementById("feedbackMessage");
+    const nameInput = document.getElementById("feedbackName"); // New Name Input
     const btn = document.getElementById("feedbackBtn");
     const status = document.getElementById("feedbackStatus");
-    const rollNo = document.getElementById("resRoll").innerText; // Capture user context
+    const rollNo = document.getElementById("resRoll").innerText;
 
     const msg = msgInput.value.trim();
-    if (!msg) return;
+    const name = nameInput.value.trim(); // Get the name
+
+    if (!msg || !name) {
+        alert("Please enter both your name and feedback.");
+        return;
+    }
 
     // UI Loading State
     btn.innerText = "SENDING...";
@@ -559,21 +565,24 @@ async function sendFeedback() {
                 Accept: "application/json",
             },
             body: JSON.stringify({
-                access_key: "a97eb536-0fc7-4209-96ff-cc48e11fe234", // 👈 PASTE YOUR KEY HERE
-                subject: `New Feedback from ${rollNo}`,
-                from_name: "Backbenchers Results Portal",
+                access_key: "a97eb536-0fc7-4209-96ff-cc48e11fe234",
+                subject: `Feedback: ${name} (${rollNo})`, // Unique subjects prevent threading/spam
+                from_name: name, // Vital: Shows the sender's name in your inbox
+                name: name,
                 message: msg,
-                hall_ticket: rollNo
+                hall_ticket: rollNo,
+                // Adding a reply_to even if it's a dummy can sometimes help filters
+                replyto: "no-reply@yourdomain.com" 
             }),
         });
 
         const result = await response.json();
 
         if (result.success) {
-            // SUCCESS UI
             status.classList.remove("hidden");
             status.innerText = "✅ Feedback Sent";
             msgInput.value = "";
+            nameInput.value = ""; // Clear name field
             btn.innerText = "SENT ✓";
         } else {
             throw new Error("Failed to send");
@@ -585,13 +594,11 @@ async function sendFeedback() {
         status.innerText = "❌ Error Sending";
         status.classList.replace("text-green-500", "text-red-500");
     } finally {
-        // Reset button after 3 seconds
         setTimeout(() => {
             btn.innerText = "SEND";
             btn.disabled = false;
             btn.classList.remove("opacity-60", "cursor-not-allowed");
             status.classList.add("hidden");
-            // Reset colors for next attempt
             status.classList.replace("text-red-500", "text-green-500");
         }, 3000);
     }
@@ -1301,5 +1308,6 @@ async function sendFeedback() {
         }
     });
 });
+
 
 
