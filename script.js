@@ -538,24 +538,23 @@ document.getElementById("hallTicketInput")
 
 /* ---------- FEEDBACK LOGIC (WEB3FORMS) ---------- */
 async function sendFeedback() {
+    const nameInput = document.getElementById("feedbackName"); // Capture Name Input
     const msgInput = document.getElementById("feedbackMessage");
-    const nameInput = document.getElementById("feedbackName"); // New Name Input
     const btn = document.getElementById("feedbackBtn");
     const status = document.getElementById("feedbackStatus");
     const rollNo = document.getElementById("resRoll").innerText;
 
+    const name = nameInput.value.trim();
     const msg = msgInput.value.trim();
-    const name = nameInput.value.trim(); // Get the name
 
-    if (!msg || !name) {
-        alert("Please enter both your name and feedback.");
+    // Validation: Ensure name is provided
+    if (!name || !msg) {
+        alert("Please enter both name and feedback");
         return;
     }
 
-    // UI Loading State
     btn.innerText = "SENDING...";
     btn.disabled = true;
-    btn.classList.add("opacity-60", "cursor-not-allowed");
 
     try {
         const response = await fetch("https://api.web3forms.com/submit", {
@@ -566,13 +565,11 @@ async function sendFeedback() {
             },
             body: JSON.stringify({
                 access_key: "a97eb536-0fc7-4209-96ff-cc48e11fe234",
-                subject: `Feedback: ${name} (${rollNo})`, // Unique subjects prevent threading/spam
-                from_name: name, // Vital: Shows the sender's name in your inbox
-                name: name,
+                subject: `New Feedback: ${name}`, // Makes subject line unique
+                from_name: name,                // This shows the name in your inbox list
+                name: name,                     // This shows the name inside the email body
                 message: msg,
-                hall_ticket: rollNo,
-                // Adding a reply_to even if it's a dummy can sometimes help filters
-                replyto: "no-reply@yourdomain.com" 
+                hall_ticket: rollNo
             }),
         });
 
@@ -584,22 +581,14 @@ async function sendFeedback() {
             msgInput.value = "";
             nameInput.value = ""; // Clear name field
             btn.innerText = "SENT ✓";
-        } else {
-            throw new Error("Failed to send");
         }
     } catch (err) {
-        console.error(err);
         btn.innerText = "FAILED";
-        status.classList.remove("hidden");
-        status.innerText = "❌ Error Sending";
-        status.classList.replace("text-green-500", "text-red-500");
     } finally {
         setTimeout(() => {
             btn.innerText = "SEND";
             btn.disabled = false;
-            btn.classList.remove("opacity-60", "cursor-not-allowed");
             status.classList.add("hidden");
-            status.classList.replace("text-red-500", "text-green-500");
         }, 3000);
     }
 }
@@ -1308,6 +1297,7 @@ async function sendFeedback() {
         }
     });
 });
+
 
 
 
