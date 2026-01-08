@@ -19,7 +19,7 @@ export default async function handler(req, res) {
       from: "whatsapp:+14155238886",
       to: `whatsapp:+91${process.env.MY_NUMBER}`,
       // 2. 👇 ADD IT TO THE MESSAGE HERE
-      body: `📩 *New Feedback Received*\n\n📄 *Page:* ${page || "Unknown"}\n👤 *Name:* ${name}\n🎓 *Roll:* ${roll || "N/A"}\n💬 *Message:* ${feedback}`
+      body: `📩 *New Feedback Received*\n\n📄 *Page:* ${page || "Unknown"}\n💬 *Message:* ${feedback}`
     });
 
     return res.status(200).json({ ok: true });
