@@ -531,76 +531,11 @@ document.getElementById("hallTicketInput")
     if (e.key === "Enter") searchResult();
   });
 
-(function(){
-  emailjs.init("5kLoGgKCRJnViVqjs"); // 👈 replace
-})();
 
 
-/* ---------- FEEDBACK LOGIC (Includes Page Title) ---------- */
-async function sendFeedback() {
-  const nameInput = document.getElementById("feedbackName");
-  const msgInput = document.getElementById("feedbackMessage");
-  const btn = document.getElementById("feedbackBtn");
-  const status = document.getElementById("feedbackStatus");
-  const rollElement = document.getElementById("resRoll");
 
-  // 1. Get Values
-  const name = nameInput?.value.trim() || "Anonymous";
-  const feedback = msgInput?.value.trim();
-  const roll = (rollElement && rollElement.innerText !== "---") 
-                ? rollElement.innerText 
-                : "General Visitor"; 
-  
-  // 2. GET CURRENT PAGE TITLE (Extracts just the main part)
-  const pageTitle = document.title.split("|")[0].trim(); 
 
-  if (!feedback) {
-    alert("Please enter a message!");
-    return;
-  }
 
-  // UI Updates
-  const originalBtnText = btn.innerText;
-  btn.innerText = "SENDING...";
-  btn.disabled = true;
-  status.classList.add("hidden"); 
-
-  try {
-    // 3. Send 'page' variable to Backend
-    // Note: If testing locally, keep http://localhost:3000. If on Vercel, use /api/send-whatsapp
-    const response = await fetch("/api/send-whatsapp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        feedback, 
-        page: pageTitle // <--- Sending the page title here
-      })
-    });
-
-    const result = await response.json();
-
-    if (response.ok && result.ok) {
-       status.innerText = "✅ Feedback Sent";
-       status.classList.remove("hidden", "text-red-500");
-       status.classList.add("text-green-500");
-       msgInput.value = ""; 
-    } else {
-       throw new Error(result.error || "Failed to send");
-    }
-
-  } catch (err) {
-    console.error("Feedback Error:", err);
-    status.innerText = "❌ Failed to send";
-    status.classList.remove("hidden", "text-green-500");
-    status.classList.add("text-red-500");
-  } finally {
-    setTimeout(() => {
-      btn.innerText = originalBtnText;
-      btn.disabled = false;
-      status.classList.add("hidden");
-    }, 3000);
-  }
-}
 
 
 
@@ -1110,68 +1045,71 @@ document.getElementById("hallTicketInput")?.addEventListener("keydown", (e) => {
        
 
 
+/* ---------- FEEDBACK LOGIC (Includes Page Title) ---------- */
 async function sendFeedback() {
-    const msgInput = document.getElementById("feedbackMessage");
-    const btn = document.getElementById("feedbackBtn");
-    const status = document.getElementById("feedbackStatus");
-    
-    // Check if we have a Hall Ticket (some pages might not have it)
-    const rollNoElement = document.getElementById("resRoll");
-    const rollNo = rollNoElement ? rollNoElement.innerText : "Unknown/General";
-    const currentPage = window.location.pathname;
+  const nameInput = document.getElementById("feedbackName");
+  const msgInput = document.getElementById("feedbackMessage");
+  const btn = document.getElementById("feedbackBtn");
+  const status = document.getElementById("feedbackStatus");
+  const rollElement = document.getElementById("resRoll");
 
-    const msg = msgInput.value.trim();
-    if (!msg) {
-        alert("Please enter a message.");
-        return;
+  // 1. Get Values
+  const name = nameInput?.value.trim() || "Anonymous";
+  const feedback = msgInput?.value.trim();
+  const roll = (rollElement && rollElement.innerText !== "---") 
+                ? rollElement.innerText 
+                : "General Visitor"; 
+  
+  // 2. GET CURRENT PAGE TITLE (Extracts just the main part)
+  const pageTitle = document.title.split("|")[0].trim(); 
+
+  if (!feedback) {
+    alert("Please enter a message!");
+    return;
+  }
+
+  // UI Updates
+  const originalBtnText = btn.innerText;
+  btn.innerText = "SENDING...";
+  btn.disabled = true;
+  status.classList.add("hidden"); 
+
+  try {
+    // 3. Send 'page' variable to Backend
+    // Note: If testing locally, keep http://localhost:3000. If on Vercel, use /api/send-whatsapp
+    const response = await fetch("/api/send-whatsapp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        feedback, 
+        page: pageTitle // <--- Sending the page title here
+      })
+    });
+
+    const result = await response.json();
+
+    if (response.ok && result.ok) {
+       status.innerText = "✅ Feedback Sent";
+       status.classList.remove("hidden", "text-red-500");
+       status.classList.add("text-green-500");
+       msgInput.value = ""; 
+    } else {
+       throw new Error(result.error || "Failed to send");
     }
 
-    // UI Loading State
-    btn.innerText = "SENDING...";
-    btn.disabled = true;
-
-    try {
-        const response = await fetch("https://api.web3forms.com/submit", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
-            body: JSON.stringify({
-                access_key: "a97eb536-0fc7-4209-96ff-cc48e11fe234",
-                subject: `Feedback from ${rollNo}`,
-                from_name: "Backbenchers Portal",
-                message: msg,
-                hall_ticket: rollNo,
-                page_source: currentPage // This tells you which page they were on
-            }),
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            status.classList.remove("hidden");
-            status.innerText = "✅ Feedback Sent";
-            status.style.color = "#22c55e"; // Green
-            msgInput.value = "";
-            btn.innerText = "SENT ✓";
-        } else {
-            throw new Error("Failed");
-        }
-    } catch (err) {
-        status.classList.remove("hidden");
-        status.innerText = "❌ Error Sending";
-        status.style.color = "#ef4444"; // Red
-        btn.innerText = "FAILED";
-    } finally {
-        setTimeout(() => {
-            btn.innerText = "SEND";
-            btn.disabled = false;
-            status.classList.add("hidden");
-        }, 3000);
-    }
+  } catch (err) {
+    console.error("Feedback Error:", err);
+    status.innerText = "❌ Failed to send";
+    status.classList.remove("hidden", "text-green-500");
+    status.classList.add("text-red-500");
+  } finally {
+    setTimeout(() => {
+      btn.innerText = originalBtnText;
+      btn.disabled = false;
+      status.classList.add("hidden");
+    }, 3000);
+  }
 }
-
         // Interactive UI
         document.addEventListener("mousemove", e => {
             const s = document.getElementById("spotlight");
@@ -1306,7 +1244,6 @@ async function sendFeedback() {
         }
     });
 });
-
 
 
 
