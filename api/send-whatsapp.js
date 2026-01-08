@@ -5,27 +5,26 @@ export default async function handler(req, res) {
     return res.status(405).json({ ok: false, error: "Method not allowed" });
   }
 
-  const { name, email, roll, feedback } = req.body;
+  // 1. 👇 GET 'page' HERE
+  const { name, roll, feedback, page } = req.body;
+
+  if (!process.env.TWILIO_SID || !process.env.TWILIO_TOKEN || !process.env.MY_NUMBER) {
+    return res.status(500).json({ ok: false, error: "Server keys missing" });
+  }
 
   const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 
-  const textMessage = `
-📩 New Feedback
-👤 Name: ${name}
-📧 Email: ${email}
-🎓 Roll: ${roll}
-💬 ${feedback}
-  `;
-
   try {
     await client.messages.create({
-      from: "whatsapp:+14155238886",  
+      from: "whatsapp:+14155238886",
       to: `whatsapp:+91${process.env.MY_NUMBER}`,
-      body: textMessage
+      // 2. 👇 ADD IT TO THE MESSAGE HERE
+      body: `📩 *New Feedback Received*\n\n📄 *Page:* ${page || "Unknown"}\n👤 *Name:* ${name}\n🎓 *Roll:* ${roll || "N/A"}\n💬 *Message:* ${feedback}`
     });
-    res.status(200).json({ ok: true });
+
+    return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error("TWILIO SEND ERROR:", err);
-    res.status(500).json({ ok: false });
+    console.error("Twilio Error:", err);
+    return res.status(500).json({ ok: false, error: err.message });
   }
 }
