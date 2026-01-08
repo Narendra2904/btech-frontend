@@ -536,52 +536,66 @@ document.getElementById("hallTicketInput")
 })();
 
 
-/* ---------- FEEDBACK LOGIC (WEB3FORMS) ---------- */
+/* ---------- FEEDBACK LOGIC (Includes Page Title) ---------- */
 async function sendFeedback() {
-  const name = document.getElementById("feedbackName").value.trim();
-  const email = document.getElementById("feedbackEmail").value.trim();
-  const feedback = document.getElementById("feedbackMessage").value.trim();
-  const roll = document.getElementById("resRoll").innerText.trim();
-
+  const nameInput = document.getElementById("feedbackName");
+  const msgInput = document.getElementById("feedbackMessage");
   const btn = document.getElementById("feedbackBtn");
   const status = document.getElementById("feedbackStatus");
+  const rollElement = document.getElementById("resRoll");
 
-  if (!name || !email || !feedback) {
-    alert("Enter name, email and feedback!");
+  // 1. Get Values
+  const name = nameInput?.value.trim() || "Anonymous";
+  const feedback = msgInput?.value.trim();
+  const roll = (rollElement && rollElement.innerText !== "---") 
+                ? rollElement.innerText 
+                : "General Visitor"; 
+  
+  // 2. GET CURRENT PAGE TITLE (Extracts just the main part)
+  const pageTitle = document.title.split("|")[0].trim(); 
+
+  if (!feedback) {
+    alert("Please enter a message!");
     return;
   }
 
+  // UI Updates
+  const originalBtnText = btn.innerText;
   btn.innerText = "SENDING...";
   btn.disabled = true;
+  status.classList.add("hidden"); 
 
   try {
-    await fetch("/api/send-whatsapp", {
+    // 3. Send 'page' variable to Backend
+    // Note: If testing locally, keep http://localhost:3000. If on Vercel, use /api/send-whatsapp
+    const response = await fetch("/api/send-whatsapp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: name,
-        email: email,
-        roll: roll,
-        feedback: feedback
+      body: JSON.stringify({ 
+        feedback, 
+        page: pageTitle // <--- Sending the page title here
       })
     });
 
-    status.classList.remove("hidden");
-    status.innerText = `✅ SENT — ${name}`;
-    btn.innerText = "SENT ✓";
+    const result = await response.json();
 
-    document.getElementById("feedbackName").value = "";
-    document.getElementById("feedbackEmail").value = "";
-    document.getElementById("feedbackMessage").value = "";
+    if (response.ok && result.ok) {
+       status.innerText = "✅ Feedback Sent";
+       status.classList.remove("hidden", "text-red-500");
+       status.classList.add("text-green-500");
+       msgInput.value = ""; 
+    } else {
+       throw new Error(result.error || "Failed to send");
+    }
 
   } catch (err) {
-    console.error(err);
-    status.classList.remove("hidden");
-    status.innerText = "❌ ERROR";
-    btn.innerText = "FAILED";
+    console.error("Feedback Error:", err);
+    status.innerText = "❌ Failed to send";
+    status.classList.remove("hidden", "text-green-500");
+    status.classList.add("text-red-500");
   } finally {
     setTimeout(() => {
-      btn.innerText = "SEND";
+      btn.innerText = originalBtnText;
       btn.disabled = false;
       status.classList.add("hidden");
     }, 3000);
@@ -1292,6 +1306,7 @@ async function sendFeedback() {
         }
     });
 });
+
 
 
 
