@@ -445,7 +445,7 @@ function addSubHeader(title, examCode = "", attemptNum = "") {
       officialLink = `
         <a href="${baseUrl}${params}" target="_blank" 
            class="no-print ml-auto text-[8px] md:text-[9px] bg-yellow-accent/10 hover:bg-yellow-accent/20 text-yellow-accent border border-yellow-accent/30 px-2 py-1 rounded transition-all flex items-center gap-1">
-           <i class="fas fa-external-link-alt text-[7px]"></i> OFFICIAL RESULT
+           <i class="fas fa-external-link-alt text-[7px]"></i> DIRECT LINK 
         </a>`;
   }
   
@@ -1244,6 +1244,7 @@ async function sendFeedback() {
         }
     });
 });
+
 
 
 
