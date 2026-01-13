@@ -12,6 +12,329 @@
     <script src="https://pl28470255.effectivegatecpm.com/cb/f3/db/cbf3db1430b391e62be964ae4fb8c60d.js"></script>
 </head>
 <body class="min-h-screen flex flex-col">
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JNTUH RESULTS | BACK.BENCHERS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="./assets/fav.png">
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://pl28470255.effectivegatecpm.com/cb/f3/db/cbf3db1430b391e62be964ae4fb8c60d.js"></script>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <div id="spotlight"></div>
+    <div id="burst-container"></div>
+
+    <!-- Header / Navbar -->
+<nav class="border-b border-zinc-800/60 bg-black/80 backdrop-blur-xl sticky top-0 z-50">
+  <div class="max-w-full lg:max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+
+    <!-- LOGO -->
+    <div class="flex items-center space-x-3 group cursor-pointer shrink-0" onclick="window.location.href='index.html'">
+      <img src="./assets/fav.png" alt="Backbenchers Logo" class="w-8 h-8 rounded-md transition-transform duration-300 group-hover:scale-110 shadow-md" />
+      <div class="bg-yellow-accent text-black font-black px-2 py-0.5 text-sm rounded-sm transition-transform duration-300 group-hover:-rotate-2">
+        BACK
+      </div>
+      <span class="font-extrabold text-lg tracking-tighter transition-colors duration-300 group-hover:text-yellow-accent">
+        BENCHERS
+      </span>
+    </div>
+
+    <!-- DESKTOP LINKS -->
+    <div class="hidden md:flex flex-1 justify-center">
+      <div class="flex items-center space-x-4 lg:space-x-6 font-bold text-[10px] uppercase tracking-widest text-zinc-500">
+        <a href="/" class="nav-link hover:text-yellow-accent border-b-2 border-yellow-accent pb-1">Home</a>
+        <a href="/result" class="nav-link hover:text-yellow-accent">All Results</a>
+        <a href="/liveresults" class="nav-link hover:text-yellow-accent">Live Results</a>
+        <a href="/backlog" class="nav-link hover:text-yellow-accent">Backlog Report</a>
+        <a href="/creditChecker" class="nav-link hover:text-yellow-accent">Credit Checker</a>
+        <a href="/compare" class="nav-link hover:text-yellow-accent">Compare</a>
+        <a href="https://btech-notes.vercel.app" class="nav-link hover:text-yellow-accent">Notes</a>
+      </div>
+    </div>
+
+    <!-- MOBILE: Server badge LEFT of hamburger -->
+    <div class="flex items-center md:hidden gap-3">
+
+      <!-- Server Active Indicator -->
+      <div class="flex items-center gap-2 text-[10px] font-black text-green-500 bg-zinc-900/50 px-3 py-1 rounded-full border border-zinc-800/50 shrink-0">
+        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+        SERVER: ACTIVE
+      </div>
+
+      <!-- Hamburger Menu -->
+      <button onclick="toggleMobileMenu()" class="text-yellow-accent text-2xl p-2 focus:outline-none hover:bg-zinc-900 rounded-lg transition-colors">
+        <i id="menuIcon" class="fas fa-bars"></i>
+      </button>
+
+    </div>
+
+    <!-- DESKTOP Server Badge (unchanged) -->
+    <div class="hidden lg:flex items-center gap-2 text-micro font-bold text-zinc-500 bg-zinc-900/50 px-3 py-1.5 rounded-full border border-zinc-800/50">
+      <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+      SERVER: ACTIVE
+    </div>
+
+  </div>
+
+  <!-- MOBILE MENU DROPDOWN -->
+  <div id="mobileMenu" class="md:hidden hidden bg-black border-t border-zinc-800 absolute top-16 left-0 w-full z-50 px-6 py-8 space-y-6 shadow-2xl animate-reveal">
+    <a href="/" class="block text-yellow-accent font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-home mr-3"></i> Home</a>
+    <a href="/result" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-search mr-3"></i> All Results</a>
+    <a href="/liveresults" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-bolt mr-3"></i> Live Results</a>
+    <a href="/backlog" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-exclamation-triangle mr-3"></i> Backlog Report</a>
+    <a href="/creditChecker" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-award mr-3"></i> Credit Checker</a>
+    <a href="/compare" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-balance-scale mr-3"></i> Compare Results</a>
+    <a href="https://btech-notes.vercel.app" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2"><i class="fas fa-notes-medical mr-3"></i> Notes</a>
+  </div>
+
+</nav>
+
+
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl mx-auto w-full px-6 py-12">
+    
+    <div class="text-center mb-10">
+        <p id="timeGreeting" class="text-yellow-accent text-[10px] font-black uppercase tracking-[0.3em] mb-2 opacity-0 transition-opacity duration-1000">Good Day Bro</p>
+        <h1 class="text-3xl md:text-4xl font-black heading-tight mb-3 uppercase">Results <span class="yellow-accent">Dashboard</span></h1>
+        <p class="text-zinc-500 text-sm max-w-md mx-auto leading-relaxed">Select a tool to interact with the JNTUH Server database.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+        
+        <a href="result.html" class="bg-zinc-900/30 border border-zinc-800/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center hover:border-yellow-accent transition-all group active:scale-95">
+    <div class="w-12 h-12 bg-yellow-accent/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-yellow-accent group-hover:text-black transition-colors">
+        <i class="fas fa-search"></i>
+    </div>
+    <h3 class="text-xs font-black uppercase tracking-widest mb-1">Results</h3>
+    <p class="text-[9px] text-zinc-500 uppercase font-bold">Search all Semesters</p>
+</a>
+<a href="liveresults.html" class="bg-zinc-900/30 border border-zinc-800/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center hover:border-blue-500 transition-all group active:scale-95">
+    <div class="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+        <i class="fas fa-bolt"></i>
+    </div>
+    <h3 class="text-xs font-black uppercase tracking-widest mb-1">Live Results</h3>
+    <p class="text-[9px] text-zinc-500 uppercase font-bold">Latest Server Updates</p>
+</a>
+
+        <a href="backlog.html" class="bg-zinc-900/30 border border-zinc-800/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center hover:border-yellow-accent transition-all group active:scale-95">
+            <div class="w-12 h-12 bg-zinc-800/50 rounded-full flex items-center justify-center mb-4 group-hover:bg-red-500 group-hover:text-white transition-colors">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="text-xs font-black uppercase tracking-widest mb-1">Backlog Report</h3>
+            <p class="text-[9px] text-zinc-500 uppercase font-bold">List Failed Subjects</p>
+        </a>
+
+        <a href="creditChecker.html" class="cursor-pointer bg-zinc-900/30 border border-zinc-800/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center hover:border-yellow-accent transition-all group active:scale-95">
+            <div class="w-12 h-12 bg-zinc-800/50 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-500 group-hover:text-white transition-colors">
+                <i class="fas fa-award"></i>
+            </div>
+            <h3 class="text-xs font-black uppercase tracking-widest mb-1">Credit Checker</h3>
+            <p class="text-[9px] text-zinc-500 uppercase font-bold">Calculate Earned Credits</p>
+          </a>
+
+        <a href="compare.html" class="cursor-pointer bg-zinc-900/30 border border-zinc-800/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center hover:border-yellow-accent transition-all group active:scale-95">
+            <div class="w-12 h-12 bg-zinc-800/50 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                <i class="fas fa-balance-scale"></i>
+            </div>
+            <h3 class="text-xs font-black uppercase tracking-widest mb-1">Comparison</h3>
+            <p class="text-[9px] text-zinc-500 uppercase font-bold">Compare with Friend</p>
+          </a>
+    </div>
+
+    
+</main>
+
+    <!-- Footer -->
+<footer class="bg-black border-t border-zinc-900 pt-10 pb-5 px-6 relative">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+
+    <!-- BRAND -->
+    <div>
+      <div class="flex items-center space-x-3 mb-6 group cursor-pointer">
+        <img
+          src="./assets/fav.png"
+          alt="Backbenchers Logo"
+          class="w-10 h-10 rounded-md shadow-lg
+                 transition-transform duration-300
+                 group-hover:scale-110 group-hover:rotate-3"
+        />
+        <div>
+          <p class="font-extrabold text-lg tracking-tight text-zinc-200
+                    group-hover:text-yellow-accent transition-colors">
+            BACKBENCHERS
+          </p>
+          <p class="text-[10px] uppercase tracking-[0.35em] text-zinc-600 font-black">
+            Results Engine
+          </p>
+        </div>
+      </div>
+
+      <p class="text-zinc-600 text-[11px] leading-relaxed max-w-xs font-medium uppercase tracking-wider">
+        Fast. Free. Reliable.  
+        Built by students, for students.
+      </p>
+        <div class="mt-6">
+    <a href="https://expo.dev/artifacts/eas/hUXNz5RPAG1R9Wc8K8geDb.apk" 
+       class="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-xl group hover:border-yellow-accent transition-all">
+       <div class="w-8 h-8 bg-yellow-accent rounded-lg flex items-center justify-center text-black group-hover:scale-110 transition-transform">
+         <i class="fas fa-robot text-sm"></i>
+       </div>
+       <div>
+         <p class="text-[10px] font-black uppercase tracking-widest text-zinc-200 leading-none">Android App</p>
+         <p class="text-[9px] text-zinc-500 font-bold mt-1">v1.0.0 • Download APK</p>
+       </div>
+    </a>
+  </div>
+    </div>
+
+    <!-- SOCIALS -->
+    <div>
+      <h4 class="font-black text-[10px] text-zinc-500 uppercase tracking-[0.3em] mb-6">
+        Connect With Us
+      </h4>
+
+      <div class="flex space-x-5">
+        <!-- Instagram -->
+        <button onclick="openPopup('instagram')"
+          class="social-btn">
+          <i class="fab fa-instagram"></i>
+        </button>
+
+        <!-- GitHub -->
+        <button onclick="openPopup('github')"
+          class="social-btn">
+          <i class="fab fa-github"></i>
+        </button>
+
+        <!-- LinkedIn -->
+        <button onclick="openPopup('linkedin')"
+          class="social-btn">
+          <i class="fab fa-linkedin-in"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- FEEDBACK -->
+    <div>
+      <div class="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/60">
+        <h4 class="font-black text-[10px] uppercase tracking-[0.3em] mb-4 text-zinc-500">
+          Feedback
+        </h4>
+        <input
+        id="feedbackMessage"
+          type="text"
+          placeholder="Any issues?"
+          class="w-full bg-black border border-zinc-800 rounded-lg
+                 px-4 py-2.5 text-xs mb-3
+                 focus:border-yellow-accent outline-none"
+        />
+    <button
+  id="feedbackBtn"
+  onclick="sendFeedback()"
+  class="w-full bg-yellow-accent text-black font-black
+         py-2.5 rounded-lg text-[10px]
+         hover:bg-yellow-400 transition-all uppercase tracking-widest">
+  SEND
+</button>
+
+<p id="feedbackStatus"
+   class="hidden mt-3 text-[10px] font-black uppercase tracking-widest text-green-500 text-center">
+  ✅ Feedback Sent
+</p>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="max-w-7xl mx-auto border-t border-zinc-900/50 pt-4
+              flex flex-col md:flex-row justify-between items-center
+              text-[9px] font-black text-zinc-700 uppercase tracking-[0.3em]">
+    <p>Developed by<span class="text-green-600">NARENDRA YENAGANDULA | MADHAN MYANA</span></p>
+    <p>© 2025 Backbenchers</p>
+  </div>
+
+
+    <!-- SOCIAL POPUP -->
+<div id="socialPopup"
+     class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999]
+            hidden flex items-center justify-center">
+
+  <div class="relative bg-white text-black w-[320px] shadow-2xl">
+
+    <!-- Close -->
+    <button onclick="closePopup()"
+      class="absolute top-3 right-3 w-8 h-8 border border-black
+             flex items-center justify-center font-black">
+      ✕
+    </button>
+
+    <!-- Header -->
+    <div class="flex flex-col items-center px-6 pt-10 pb-6">
+      <div id="popupIcon"
+           class="w-14 h-14 flex items-center justify-center mb-4">
+        <!-- icon injected by JS -->
+      </div>
+
+      <h2 id="popupTitle"
+          class="text-lg font-black tracking-widest uppercase">
+        INSTAGRAM
+      </h2>
+
+      <p class="text-[10px] text-gray-500 uppercase tracking-[0.25em] mt-1">
+        Select a developer to connect
+      </p>
+    </div>
+
+    <!-- USERS -->
+    <div id="popupUsers" class="px-6 pb-8 space-y-4">
+    </div>
+
+  </div>
+</div>
+
+
+  </div>
+  <div id="app-download-notification" 
+     style="display: none; z-index: 9999;" 
+     class="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:max-w-md animate-reveal">
+    
+    <div class="bg-zinc-900 border-2 border-yellow-accent p-4 rounded-2xl shadow-[0_0_30px_rgba(255,215,0,0.15)] flex items-center gap-4 relative overflow-hidden">
+        <div class="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white/5 opacity-40 group-hover:animate-shine"></div>
+
+        <button type="button" 
+                onclick="window.closeAppNotification()" 
+                class="absolute top-2 right-2 text-zinc-500 hover:text-yellow-accent transition-colors p-1 z-50">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div class="bg-yellow-accent/10 border border-yellow-accent/30 w-12 h-12 rounded-xl flex items-center justify-center shrink-0">
+            <i class="fas fa-mobile-alt text-yellow-accent text-xl"></i>
+        </div>
+
+        <div class="flex-grow pr-4">
+            <h4 class="font-black text-xs uppercase tracking-widest text-yellow-accent leading-none">Download Android App</h4>
+            <p class="text-[10px] text-zinc-400 font-bold mt-1 leading-tight">Get your results and notes even faster with our native app.</p>
+        </div>
+
+        <a href="https://expo.dev/artifacts/eas/hUXNz5RPAG1R9Wc8K8geDb.apk" 
+           class="bg-yellow-accent hover:bg-yellow-400 text-black font-black px-4 py-2 rounded-lg text-[9px] uppercase tracking-widest transition-all active:scale-95 shadow-lg flex items-center gap-2">
+            Get <i class="fas fa-download text-[8px]"></i>
+        </a>
+    </div>
+</div>
+</footer>
+<script src="script.js"></script>
+</body>
+</html>
 
     <div id="spotlight"></div>
     <div id="burst-container"></div>
