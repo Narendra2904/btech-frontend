@@ -781,6 +781,7 @@ async function fetchLiveResults() {
     document.getElementById("resRoll").innerText = studentData.hallTicket || ht;
     document.getElementById("resFather").innerText = studentData.fatherName || "---";
     document.getElementById("resCollegeCode").innerText = studentData.collegeCode || "---";
+    document.getElementById("resCollege").innerText = FULL_RESULT.college || "—";  
     document.getElementById("resBranch").innerText = studentData.branch || "---";
 
     // Render ONLY selected exam results
