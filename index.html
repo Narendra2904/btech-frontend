@@ -330,5 +330,88 @@ Good Day Bro</p>
 </div>
 </footer>
 <script src="script.js" defer></script>
+    <script>
+        // 📱 APP DOWNLOAD POPUP LOGIC
+window.onload = function () {
+  // Optional: Check if user already saw the popup (uncomment to enable)
+  // if (!localStorage.getItem("appPopupSeen")) {
+      showAppPopup();
+  // }
+};
+
+function showAppPopup() {
+  const popup = document.createElement("div");
+  popup.id = "appPopup";
+  popup.className = "fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4";
+
+  // The APK Link
+  const apkLink = "https://expo.dev/artifacts/eas/jVvPNbB9hRwgeRKS3qhbYe.apk";
+
+  popup.innerHTML = `
+    <div class="bg-white text-black w-full max-w-[340px] p-6 rounded-2xl shadow-2xl animate-reveal relative border border-yellow-500/30">
+      
+      <button onclick="closeAppPopup()" 
+              class="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <div class="flex justify-center mb-4">
+        <div class="bg-yellow-100 p-3 rounded-full">
+           <i class="fab fa-android text-3xl text-yellow-600"></i>
+        </div>
+      </div>
+
+      <h2 class="text-center font-black text-xl uppercase tracking-wider mb-2 text-gray-900">
+        Download the App
+      </h2>
+      
+      <p class="text-center text-sm font-medium text-gray-600 mb-6 leading-relaxed">
+        Get the official <span class="text-yellow-600 font-bold">Android App</span> for a faster experience, live updates, and better performance! 🚀
+      </p>
+
+      <div class="flex flex-col gap-3">
+        <a href="${apkLink}" 
+           class="block w-full bg-yellow-600 hover:bg-yellow-500 text-white font-black py-3 rounded-xl text-center text-sm uppercase tracking-widest shadow-lg shadow-yellow-500/30 active:scale-95 transition-all flex items-center justify-center gap-2">
+           <i class="fas fa-download"></i> Download APK
+        </a>
+        
+        <button onclick="closeAppPopup()" 
+                class="block w-full text-gray-400 hover:text-gray-600 font-bold text-xs uppercase tracking-widest py-2">
+          Maybe Later
+        </button>
+      </div>
+
+    </div>
+  `;
+
+  document.body.appendChild(popup);
+}
+
+function closeAppPopup() {
+  const popup = document.getElementById("appPopup");
+  if (popup) {
+    popup.remove();
+    // Optional: Remember that user closed it
+    // localStorage.setItem("appPopupSeen", "true");
+  }
+}
+
+// Mobile Menu Logic (Kept unchanged)
+function toggleMobileMenu() {
+  const menu = document.getElementById("mobileMenu");
+  const icon = document.querySelector('nav button i'); 
+  
+  if (menu.classList.contains("hidden")) {
+      menu.classList.remove("hidden");
+      menu.classList.add("animate-reveal"); 
+      if (icon) icon.className = "fas fa-times"; 
+  } else {
+      menu.classList.add("hidden");
+      if (icon) icon.className = "fas fa-bars"; 
+  }
+}
+    </script>
 </body>
 </html>
