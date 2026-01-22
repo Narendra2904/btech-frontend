@@ -333,24 +333,28 @@ Good Day Bro</p>
 <script>
   // 📱 APP DOWNLOAD LOGIC (Popup + Sticky Bar)
   
-  window.onload = function () {
-    // Show the main popup after a short delay
-    setTimeout(showAppPopup, 1000);
-  };
+  // Use addEventListener to prevent conflicts with other scripts
+  window.addEventListener('load', function() {
+      console.log("Page loaded, triggering popup in 1 second..."); // Debug message
+      setTimeout(showAppPopup, 1000);
+  });
 
   // --- 1. MODAL POPUP FUNCTIONS ---
   function showAppPopup() {
     // Prevent duplicate popups
     if (document.getElementById("appPopup")) return;
 
+    console.log("Creating Popup..."); // Debug message
+
     const popup = document.createElement("div");
     popup.id = "appPopup";
-    popup.className = "fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 transition-opacity duration-300";
+    // Added 'flex' and fixed z-index to ensure visibility
+    popup.className = "fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4";
 
     const apkLink = "https://expo.dev/artifacts/eas/jVvPNbB9hRwgeRKS3qhbYe.apk";
 
     popup.innerHTML = `
-      <div class="bg-white text-black w-full max-w-[340px] p-6 rounded-2xl shadow-2xl animate-reveal relative border border-yellow-500/30">
+      <div class="bg-white text-black w-full max-w-[340px] p-6 rounded-2xl shadow-2xl relative border border-yellow-500/30">
         
         <button onclick="closeAppPopup()" 
                 class="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition-colors">
@@ -370,11 +374,12 @@ Good Day Bro</p>
         </h2>
         
         <p class="text-center text-sm font-medium text-gray-600 mb-6 leading-relaxed">
-          Get the official <span class="text-yellow-600 font-bold">Android App</span> for a faster experience, live updates, and better performance! 🚀
+          Get the official <span class="text-yellow-600 font-bold">Android App</span> for a faster experience! 🚀
         </p>
 
         <div class="flex flex-col gap-3">
           <a href="${apkLink}" 
+             target="_blank"
              class="block w-full bg-yellow-600 hover:bg-yellow-500 text-white font-black py-3 rounded-xl text-center text-sm uppercase tracking-widest shadow-lg shadow-yellow-500/30 active:scale-95 transition-all flex items-center justify-center gap-2">
              <i class="fas fa-download"></i> Download APK
           </a>
@@ -394,7 +399,6 @@ Good Day Bro</p>
     const popup = document.getElementById("appPopup");
     if (popup) {
       popup.remove();
-      // When popup closes, SHOW the sticky bar at the bottom
       showStickyNotification();
     }
   }
@@ -403,12 +407,12 @@ Good Day Bro</p>
   function showStickyNotification() {
     const notification = document.getElementById("app-download-notification");
     if (notification) {
-      notification.style.display = "flex"; // Make it visible
-      notification.classList.add("animate-bounce-in"); // Optional animation class
+      // Force display flex to override 'display: none'
+      notification.style.display = "flex"; 
     }
   }
 
-  // This function was missing in your HTML 'onclick'
+  // Define this globally so the HTML onclick can find it
   window.closeAppNotification = function() {
     const notification = document.getElementById("app-download-notification");
     if (notification) {
@@ -423,6 +427,7 @@ Good Day Bro</p>
     
     if (menu.classList.contains("hidden")) {
         menu.classList.remove("hidden");
+        // Ensure 'animate-reveal' is defined in your CSS, or remove it if causing issues
         menu.classList.add("animate-reveal"); 
         if (icon) icon.className = "fas fa-times"; 
     } else {
