@@ -1,264 +1,447 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-        
-        :root {
-            --accent: #FFD700;
-        }
-        /* Page Transition: Slide Up and Fade In */
-@keyframes pageSlideIn {
-    from { 
-        opacity: 0; 
-        transform: translateY(30px); 
-        filter: blur(10px);
-    }
-    to { 
-        opacity: 1; 
-        transform: translateY(0);
-        filter: blur(0);
-    }
-}
-
-/* Apply to the body so the entire layout slides together */
-body {
-    animation: pageSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Smooth Navigation Underline effect for Desktop Menu */
-.nav-link {
-    position: relative;
-    padding-bottom: 4px;
-}
-.nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: var(--accent);
-    transition: width 0.3s ease;
-}
-.nav-link:hover::after {
-    width: 100%;
-}
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #080808;
-            color: #ffffff;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
-
-        /* Spotlight Effect */
-        #spotlight {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255, 215, 0, 0.05) 0%, rgba(0,0,0,0) 50%);
-            z-index: 999;
-        }
-
-        .yellow-accent { color: var(--accent); }
-        .bg-yellow-accent { background-color: var(--accent); }
-        
-        .heading-tight { letter-spacing: -0.025em; line-height: 1.2; }
-        .text-micro { font-size: 0.65rem; letter-spacing: 0.08em; }
-
-        /* Card Interaction */
-        .interactive-card {
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .interactive-card:hover {
-            transform: translateY(-4px) scale(1.01);
-            border-color: rgba(255, 215, 0, 0.3);
-            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
-        }
-
-        .input-focus:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.1);
-        }
-
-        /* Animations */
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-reveal { animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-        .loader-bar {
-            width: 0%;
-            height: 2px;
-            background: var(--accent);
-            transition: width 1s ease-in-out;
-        }
-
-        /* Emoji Burst Container */
-        #burst-container {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 1000;
-        }
-
-        .particle {
-            position: absolute;
-            font-size: 24px;
-            animation: particleAnim 1s ease-out forwards;
-        }
-
-        @keyframes particleAnim {
-            0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
-        }
-
-        /* Styling for Info Table to match Results Table */
-.info-table td {
-    background: rgba(24, 24, 27, 0.4);
-}
-
-@media print {
-    /* Force B&W Print */
-    html, body {
-        background: #fff !important;
-        color: #000 !important;
-    }
-
-    .no-print {
-        display: none !important;
-    }
-    /* Hide non-essential UI */
-    nav, footer, .search-section, .search-container-box, 
-    #spotlight, #burst-container, .no-print, #semesterSelect {
-        display: none !important;
-    }
-
-    /* Professional Boxed Styling for both Info and Result Tables */
-    .info-table, .boxed-table, table {
-        width: 100% !important;
-        border: 2px solid #000 !important;
-        border-collapse: collapse !important;
-        margin-bottom: 15px !important;
-    }
-
-    td, th {
-        border: 1px solid #000 !important;
-        padding: 5px 8px !important;
-        color: #000 !important;
-    }
-
-    /* Label and value formatting inside the table cells */
-    .text-micro {
-        font-size: 8px !important;
-        border-bottom: 0.5px solid #000 !important;
-        margin-bottom: 2px !important;
-        display: block !important;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+  name="description"
+  content="Get JNTUH results instantly without server issues. Fast, reliable results portal for JNTUH students."
+/>
+    <title>JNTUH RESULTS | BACK.BENCHERS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="./assets/fav.png">
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     
-    .font-bold {
-        font-size: 11px !important;
+</head>
+<body class="min-h-screen flex flex-col">
+
+
+    <div id="spotlight"></div>
+    <div id="burst-container"></div>
+
+    <!-- Header / Navbar -->
+<nav class="border-b border-zinc-800/60 bg-black/80 backdrop-blur-xl sticky top-0 z-50">
+  <div class="max-w-full lg:max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+
+    <!-- LOGO -->
+    <div class="flex items-center space-x-3 group cursor-pointer shrink-0" onclick="window.location.href='index.html'">
+      <img src="./assets/fav.png" alt="Backbenchers Logo" class="w-8 h-8 rounded-md transition-transform duration-300 group-hover:scale-110 shadow-md" />
+      <div class="bg-yellow-accent text-black font-black px-2 py-0.5 text-sm rounded-sm transition-transform duration-300 group-hover:-rotate-2">
+        BACK
+      </div>
+      <span class="font-extrabold text-lg tracking-tighter transition-colors duration-300 group-hover:text-yellow-accent">
+        BENCHERS
+      </span>
+    </div>
+
+    <!-- DESKTOP LINKS -->
+    <div class="hidden md:flex flex-1 justify-center">
+      <div class="flex items-center space-x-4 lg:space-x-6 font-bold text-[10px] uppercase tracking-widest text-zinc-500">
+        <a href="/" class="nav-link hover:text-yellow-accent border-b-2 border-yellow-accent pb-1">Home</a>
+        <a href="/result" class="nav-link hover:text-yellow-accent">All Results</a>
+        <a href="/liveresults" class="nav-link hover:text-yellow-accent">Live Results</a>
+        <a href="/backlog" class="nav-link hover:text-yellow-accent">Backlog Report</a>
+        <a href="/creditChecker" class="nav-link hover:text-yellow-accent">Credit Checker</a>
+        <a href="/compare" class="nav-link hover:text-yellow-accent">Compare</a>
+        <a href="https://btech-notes.vercel.app" class="nav-link hover:text-yellow-accent">Notes</a>
+      </div>
+    </div>
+
+    <!-- MOBILE: Server badge LEFT of hamburger -->
+    <div class="flex items-center md:hidden gap-3">
+
+      <!-- Server Active Indicator -->
+      <div class="flex items-center gap-2 text-[10px] font-black text-green-500 bg-zinc-900/50 px-3 py-1 rounded-full border border-zinc-800/50 shrink-0">
+        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+        SERVER: ACTIVE
+      </div>
+
+      <!-- Hamburger Menu -->
+      <button onclick="toggleMobileMenu()" class="text-yellow-accent text-2xl p-2 focus:outline-none hover:bg-zinc-900 rounded-lg transition-colors">
+        <i id="menuIcon" class="fas fa-bars"></i>
+      </button>
+
+    </div>
+
+    <!-- DESKTOP Server Badge (unchanged) -->
+    <div class="hidden lg:flex items-center gap-2 text-micro font-bold text-zinc-500 bg-zinc-900/50 px-3 py-1.5 rounded-full border border-zinc-800/50">
+      <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+      SERVER: ACTIVE
+    </div>
+
+  </div>
+
+  <!-- MOBILE MENU DROPDOWN -->
+  <div id="mobileMenu" class="md:hidden hidden bg-black border-t border-zinc-800 absolute top-16 left-0 w-full z-50 px-6 py-8 space-y-6 shadow-2xl animate-reveal">
+    <a href="/" class="block text-yellow-accent font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-home mr-3"></i> Home</a>
+    <a href="/result" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-search mr-3"></i> All Results</a>
+    <a href="/liveresults" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-bolt mr-3"></i> Live Results</a>
+    <a href="/backlog" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-exclamation-triangle mr-3"></i> Backlog Report</a>
+    <a href="/creditChecker" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-award mr-3"></i> Credit Checker</a>
+    <a href="/compare" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-balance-scale mr-3"></i> Compare Results</a>
+    <a href="https://btech-notes.vercel.app" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2"><i class="fas fa-notes-medical mr-3"></i> Notes</a>
+  </div>
+
+</nav>
+
+   
+
+
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl mx-auto w-full px-6 py-12">
+    
+    <div class="text-center mb-10">
+        <p
+  id="timeGreeting"
+  class="text-yellow-accent text-[10px] font-black uppercase tracking-[0.3em] mb-2"
+>
+Good Day Bro</p>
+        <h1 class="text-3xl md:text-4xl font-black heading-tight mb-3 uppercase">Results <span class="yellow-accent">Dashboard</span></h1>
+        <p class="text-zinc-500 text-sm max-w-md mx-auto leading-relaxed">Select a tool to interact with the JNTUH Server database.</p>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+        
+        <a href="result.html" class="bg-zinc-900/30 border border-zinc-800/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center hover:border-yellow-accent-500 transition-all group active:scale-95">
+    <div class="w-12 h-12 bg-yellow-accent/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-yellow-accent group-hover:text-black transition-colors">
+        <i class="fas fa-search"></i>
+    </div>
+    <h3 class="text-xs font-black uppercase tracking-widest mb-1">Results</h3>
+    <p class="text-[9px] text-zinc-500 uppercase font-bold">Search all Semesters</p>
+</a>
+<a href="liveresults.html" class="bg-zinc-900/30 border border-zinc-800/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center hover:border-blue-500 transition-all group active:scale-95">
+    <div class="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+        <i class="fas fa-bolt"></i>
+    </div>
+    <h3 class="text-xs font-black uppercase tracking-widest mb-1">Live Results</h3>
+    <p class="text-[9px] text-zinc-500 uppercase font-bold">Latest Server Updates</p>
+</a>
+
+        <a href="backlog.html" class="bg-zinc-900/30 border border-zinc-800/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center hover:border-yellow-accent transition-all group active:scale-95">
+            <div class="w-12 h-12 bg-zinc-800/50 rounded-full flex items-center justify-center mb-4 group-hover:bg-red-500 group-hover:text-white transition-colors">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="text-xs font-black uppercase tracking-widest mb-1">Backlog Report</h3>
+            <p class="text-[9px] text-zinc-500 uppercase font-bold">List Failed Subjects</p>
+        </a>
+
+        <a href="creditChecker.html" class="cursor-pointer bg-zinc-900/30 border border-zinc-800/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center hover:border-yellow-accent transition-all group active:scale-95">
+            <div class="w-12 h-12 bg-zinc-800/50 rounded-full flex items-center justify-center mb-4 group-hover:bg-green-500 group-hover:text-white transition-colors">
+                <i class="fas fa-award"></i>
+            </div>
+            <h3 class="text-xs font-black uppercase tracking-widest mb-1">Credit Checker</h3>
+            <p class="text-[9px] text-zinc-500 uppercase font-bold">Calculate Earned Credits</p>
+          </a>
+
+        <a href="compare.html" class="cursor-pointer bg-zinc-900/30 border border-zinc-800/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center hover:border-yellow-accent transition-all group active:scale-95">
+            <div class="w-12 h-12 bg-zinc-800/50 rounded-full flex items-center justify-center mb-4 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                <i class="fas fa-balance-scale"></i>
+            </div>
+            <h3 class="text-xs font-black uppercase tracking-widest mb-1">Comparison</h3>
+            <p class="text-[9px] text-zinc-500 uppercase font-bold">Compare with Friend</p>
+          </a>
+          <a href="https://btech-notes.vercel.app" class="cursor-pointer bg-zinc-900/30 border border-zinc-800/50 p-6 rounded-2xl flex flex-col items-center justify-center text-center hover:border-yellow-accent transition-all group active:scale-95">
+            <div class="w-12 h-12 bg-zinc-800/50 rounded-full flex items-center justify-center mb-4 group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <h3 class="text-xs font-black uppercase tracking-widest mb-1">Notes</h3>
+            <p class="text-[9px] text-zinc-500 uppercase font-bold">Study Materials</p>
+        </a>
+    </div>
+
+    
+</main>
+
+    <!-- Footer -->
+<footer class="bg-black border-t border-zinc-900 pt-10 pb-5 px-6 relative">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+
+    <!-- BRAND -->
+    <div>
+      <div class="flex items-center space-x-3 mb-6 group cursor-pointer">
+        <img
+          src="./assets/fav.png"
+          alt="Backbenchers Logo"
+          class="w-10 h-10 rounded-md shadow-lg
+                 transition-transform duration-300
+                 group-hover:scale-110 group-hover:rotate-3"
+        />
+        <div>
+          <p class="font-extrabold text-lg tracking-tight text-zinc-200
+                    group-hover:text-yellow-accent transition-colors">
+            BACKBENCHERS
+          </p>
+          <p class="text-[10px] uppercase tracking-[0.35em] text-zinc-600 font-black">
+            Results Engine
+          </p>
+        </div>
+      </div>
+
+      <p class="text-zinc-600 text-[11px] leading-relaxed max-w-xs font-medium uppercase tracking-wider">
+        Fast. Free. Reliable.  
+        Built by students, for students.
+      </p>
+        <div class="mt-6">
+    <a href="https://expo.dev/artifacts/eas/jVvPNbB9hRwgeRKS3qhbYe.apk" 
+       class="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-xl group hover:border-yellow-accent transition-all">
+       <div class="w-8 h-8 bg-yellow-accent rounded-lg flex items-center justify-center text-black group-hover:scale-110 transition-transform">
+         <i class="fas fa-robot text-sm"></i>
+       </div>
+       <div>
+         <p class="text-[10px] font-black uppercase tracking-widest text-zinc-200 leading-none">Android App</p>
+         <p class="text-[9px] text-zinc-500 font-bold mt-1">v1.0.2 • Download APK</p>
+       </div>
+    </a>
+  </div>
+    </div>
+
+    <!-- SOCIALS -->
+    <div>
+      <h4 class="font-black text-[10px] text-zinc-500 uppercase tracking-[0.3em] mb-6">
+        Connect With Us
+      </h4>
+
+      <div class="flex space-x-5">
+        <!-- Instagram -->
+        <button onclick="openPopup('instagram')"
+          class="social-btn">
+          <i class="fab fa-instagram"></i>
+        </button>
+
+        <!-- GitHub -->
+        <button onclick="openPopup('github')"
+          class="social-btn">
+          <i class="fab fa-github"></i>
+        </button>
+
+        <!-- LinkedIn -->
+        <button onclick="openPopup('linkedin')"
+          class="social-btn">
+          <i class="fab fa-linkedin-in"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- FEEDBACK -->
+    <div>
+      <div class="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/60">
+        <h4 class="font-black text-[10px] uppercase tracking-[0.3em] mb-4 text-zinc-500">
+          Feedback
+        </h4>
+        <input
+        id="feedbackMessage"
+          type="text"
+          placeholder="Any issues?"
+          class="w-full bg-black border border-zinc-800 rounded-lg
+                 px-4 py-2.5 text-xs mb-3
+                 focus:border-yellow-accent outline-none"
+        />
+    <button
+  id="feedbackBtn"
+  onclick="sendFeedback()"
+  class="w-full bg-yellow-accent text-black font-black
+         py-2.5 rounded-lg text-[10px]
+         hover:bg-yellow-400 transition-all uppercase tracking-widest">
+  SEND
+</button>
+
+<p id="feedbackStatus"
+   class="hidden mt-3 text-[10px] font-black uppercase tracking-widest text-green-500 text-center">
+  ✅ Feedback Sent
+</p>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="max-w-7xl mx-auto border-t border-zinc-900/50 pt-4
+              flex flex-col md:flex-row justify-between items-center
+              text-[9px] font-black text-zinc-700 uppercase tracking-[0.3em]">
+    <p>Developed by<span class="text-green-600"><a href="https://narendra-yenagandula-portfolio.vercel.app/">NARENDRA YENAGANDULA </a>| MADHAN MYANA</span></p>
+    <p>© 2025 Backbenchers</p>
+  </div>
+
+
+    <!-- SOCIAL POPUP -->
+<div id="socialPopup"
+     class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999]
+            hidden flex items-center justify-center">
+
+  <div class="relative bg-white text-black w-[320px] shadow-2xl">
+
+    <!-- Close -->
+    <button onclick="closePopup()"
+      class="absolute top-3 right-3 w-8 h-8 border border-black
+             flex items-center justify-center font-black">
+      ✕
+    </button>
+
+    <!-- Header -->
+    <div class="flex flex-col items-center px-6 pt-10 pb-6">
+      <div id="popupIcon"
+           class="w-14 h-14 flex items-center justify-center mb-4">
+        <!-- icon injected by JS -->
+      </div>
+
+      <h2 id="popupTitle"
+          class="text-lg font-black tracking-widest uppercase">
+        INSTAGRAM
+      </h2>
+
+      <p class="text-[10px] text-gray-500 uppercase tracking-[0.25em] mt-1">
+        Select a developer to connect
+      </p>
+    </div>
+
+    <!-- USERS -->
+    <div id="popupUsers" class="px-6 pb-8 space-y-4">
+    </div>
+
+  </div>
+</div>
+
+
+  </div>
+  <div id="app-download-notification" 
+     style="display: none; z-index: 9999;" 
+     class="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:max-w-md animate-reveal">
+    
+    <div class="bg-zinc-900 border-2 border-yellow-accent p-4 rounded-2xl shadow-[0_0_30px_rgba(255,215,0,0.15)] flex items-center gap-4 relative overflow-hidden">
+        <div class="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white/5 opacity-40 group-hover:animate-shine"></div>
+
+        <button type="button" 
+                onclick="window.closeAppNotification()" 
+                class="absolute top-2 right-2 text-zinc-500 hover:text-yellow-accent transition-colors p-1 z-50">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div class="bg-yellow-accent/10 border border-yellow-accent/30 w-12 h-12 rounded-xl flex items-center justify-center shrink-0">
+            <i class="fas fa-mobile-alt text-yellow-accent text-xl"></i>
+        </div>
+
+        <div class="flex-grow pr-4">
+            <h4 class="font-black text-xs uppercase tracking-widest text-yellow-accent leading-none">Download Android App</h4>
+            <p class="text-[10px] text-zinc-400 font-bold mt-1 leading-tight">Get your results and notes even faster with our native app.</p>
+        </div>
+
+        <a href="https://expo.dev/artifacts/eas/jVvPNbB9hRwgeRKS3qhbYe.apk" 
+           class="bg-yellow-accent hover:bg-yellow-400 text-black font-black px-4 py-2 rounded-lg text-[9px] uppercase tracking-widest transition-all active:scale-95 shadow-lg flex items-center gap-2">
+            Get <i class="fas fa-download text-[8px]"></i>
+        </a>
+    </div>
+</div>
+</footer>
+<script src="script.js" defer></script>
+<script>
+  // 📱 APP DOWNLOAD LOGIC (Popup + Sticky Bar)
+  
+  // Use addEventListener to prevent conflicts with other scripts
+  window.addEventListener('load', function() {
+      console.log("Page loaded, triggering popup in 1 second..."); // Debug message
+      setTimeout(showAppPopup, 1000);
+  });
+
+  // --- 1. MODAL POPUP FUNCTIONS ---
+  function showAppPopup() {
+    // Prevent duplicate popups
+    if (document.getElementById("appPopup")) return;
+
+    console.log("Creating Popup..."); // Debug message
+
+    const popup = document.createElement("div");
+    popup.id = "appPopup";
+    // Added 'flex' and fixed z-index to ensure visibility
+    popup.className = "fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4";
+
+    const apkLink = "https://expo.dev/artifacts/eas/jVvPNbB9hRwgeRKS3qhbYe.apk";
+
+    popup.innerHTML = `
+      <div class="bg-white text-black w-full max-w-[340px] p-6 rounded-2xl shadow-2xl relative border border-yellow-500/30">
+        
+        <button onclick="closeAppPopup()" 
+                class="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <div class="flex justify-center mb-4">
+          <div class="bg-yellow-100 p-3 rounded-full">
+             <i class="fab fa-android text-3xl text-yellow-600"></i>
+          </div>
+        </div>
+
+        <h2 class="text-center font-black text-xl uppercase tracking-wider mb-2 text-gray-900">
+          Download the App
+        </h2>
+        
+        <p class="text-center text-sm font-medium text-gray-600 mb-6 leading-relaxed">
+          Get the official <span class="text-yellow-600 font-bold">Android App</span> for a faster experience! 🚀
+        </p>
+
+        <div class="flex flex-col gap-3">
+          <a href="${apkLink}" 
+             target="_blank"
+             class="block w-full bg-yellow-600 hover:bg-yellow-500 text-white font-black py-3 rounded-xl text-center text-sm uppercase tracking-widest shadow-lg shadow-yellow-500/30 active:scale-95 transition-all flex items-center justify-center gap-2">
+             <i class="fas fa-download"></i> Download APK
+          </a>
+          
+          <button onclick="closeAppPopup()" 
+                  class="block w-full text-gray-400 hover:text-gray-600 font-bold text-xs uppercase tracking-widest py-2">
+            Maybe Later
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(popup);
+  }
+
+  function closeAppPopup() {
+    const popup = document.getElementById("appPopup");
+    if (popup) {
+      popup.remove();
+      showStickyNotification();
     }
-}
+  }
 
-.social-btn {
-  width: 44px;
-  height: 44px;
-  border: 1px solid #27272a;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #a1a1aa;
-  font-size: 16px;
-  transition: all 0.3s ease;
-}
-.social-btn:hover {
-  background: #FFD700;
-  color: #000;
-  border-color: #FFD700;
-  transform: translateY(-4px);
-}
-
-.nav-link {
-    white-space: nowrap; /* Prevents links from breaking into two lines */
-    display: inline-block;
-}
-
-/* Optional: Hide less important items on smaller tablets to keep alignment clean */
-@media (max-width: 1024px) {
-    .md\:flex.items-center.space-x-4 a:nth-last-child(-n+2) {
-        display: none;
+  // --- 2. STICKY NOTIFICATION FUNCTIONS ---
+  function showStickyNotification() {
+    const notification = document.getElementById("app-download-notification");
+    if (notification) {
+      // Force display flex to override 'display: none'
+      notification.style.display = "flex"; 
     }
-}
+  }
 
-/* Credit Table Specific Styles */
-.credit-table td {
-    border: 1px solid #27272a; /* matches zinc-800 */
-}
-
-/* Ensure text is strictly uppercase as per JNTUH style */
-#studentName, #collegeName, #branchName {
-    text-transform: uppercase;
-}
-
-/* Print optimization for the Credit Table */
-@media print {
-    .bg-zinc-900 { background-color: #f3f4f6 !important; color: #000 !important; }
-    .text-blue-400, .text-blue-300 { color: #000 !important; font-weight: bold !important; }
-    .border-zinc-700 { border-color: #000 !important; }
-}
-
-
-
-
-/* Staggered Slide Up Animation */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
+  // Define this globally so the HTML onclick can find it
+  window.closeAppNotification = function() {
+    const notification = document.getElementById("app-download-notification");
+    if (notification) {
+      notification.style.display = "none";
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+  }
+
+  // --- 3. MOBILE MENU LOGIC ---
+  function toggleMobileMenu() {
+    const menu = document.getElementById("mobileMenu");
+    const icon = document.querySelector('nav button i'); 
+    
+    if (menu.classList.contains("hidden")) {
+        menu.classList.remove("hidden");
+        // Ensure 'animate-reveal' is defined in your CSS, or remove it if causing issues
+        menu.classList.add("animate-reveal"); 
+        if (icon) icon.className = "fas fa-times"; 
+    } else {
+        menu.classList.add("hidden");
+        if (icon) icon.className = "fas fa-bars"; 
     }
-}
-
-.animate-fade-in {
-    animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-/* Pulse effect for the search button when active */
-.btn-pulse:active {
-    transform: scale(0.95);
-    box-shadow: 0 0 15px var(--accent);
-}
-
-/* Shimmer effect for the loading state */
-.shimmer {
-    background: linear-gradient(90deg, #111 25%, #222 50%, #111 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-
-.animate-reveal {
-    animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+  }
+</script>
+</body>
+</html>
