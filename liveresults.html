@@ -785,17 +785,36 @@ async function fetchLiveResults() {
   resultBox.classList.add("hidden");
 
   try {
-    console.log("Fetching for:", ht); // Debug Log 1
+    console.log("Fetching for:", ht);
     const res = await fetch(API_BASE_URL + ht);
     const json = await res.json();
     
-    console.log("API Response:", json); // Debug Log 2: Check your console for this!
+    console.log("API Response:", json); 
 
-    // Handle if backend returns data directly OR inside a .data wrapper
-    const studentData = json.data || json;
+    // 1. Get the data container
+    let studentData = json.data || json;
 
+    // 🛠️ FIX START: Handle Stringified Cache Data
+    if (typeof studentData === "string") {
+        console.warn("Received stringified data, attempting to parse...");
+        try {
+            // Check if it uses single quotes (Python style) and replace with double quotes
+            // NOTE: This assumes names don't have apostrophes (e.g. O'Connor might break this simple fix)
+            if (studentData.includes("'")) {
+                studentData = studentData.replace(/'/g, '"');
+            }
+            studentData = JSON.parse(studentData);
+        } catch (e) {
+            console.error("Failed to parse cached data string:", e);
+            throw new Error("Server returned unreadable cached data.");
+        }
+    }
+    // 🛠️ FIX END
+
+    // 2. Now validate the structure
     if (!studentData || !studentData.semesters) {
-        throw new Error("Invalid data structure received from server");
+        console.error("Bad Data Structure:", studentData);
+        throw new Error("Student data is missing semester details.");
     }
 
     // Fill student panel info
