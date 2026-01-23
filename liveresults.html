@@ -628,10 +628,14 @@ function openPopup(type) {
   });
 
   popup.classList.remove("hidden");
+  // 🔒 LOCK SCROLL
+  document.body.style.overflow = "hidden";
 }
 
 function closePopup() {
   document.getElementById("socialPopup").classList.add("hidden");
+  // 🔓 UNLOCK SCROLL
+  document.body.style.overflow = "";
 }
 
 // click outside popup to close
@@ -641,22 +645,16 @@ document.getElementById("socialPopup")
   });
 
 
-
-
 const SELECTED_EXAM_CODE = "1921";
 const API_BASE_URL = "https://jntuh-backend-7rad.onrender.com/result/";
 
 // Convert semester like 3-1 → III-I (table use only)
 function convertSemToRomanText(sem) {
   const map = {
-    "1-1": "I-I",
-    "1-2": "I-II",
-    "2-1": "II-I",
-    "2-2": "II-II",
-    "3-1": "III-I",
-    "3-2": "III-II",
-    "4-1": "IV-I",
-    "4-2": "IV-II"
+    "1-1": "I-I", "1-2": "I-II",
+    "2-1": "II-I", "2-2": "II-II",
+    "3-1": "III-I", "3-2": "III-II",
+    "4-1": "IV-I", "4-2": "IV-II"
   };
   return map[sem.trim()] || sem;
 }
@@ -679,34 +677,24 @@ function detectResult(subjects) {
   return subjects.some(sub => sub.grade?.toUpperCase().trim() === "F") ? "FAILED" : "PASSED";
 }
 
-// Render only selected exam code + copy sem SGPA logic for heading
+// Render only selected exam code
 function renderResultTable(studentData) {
   const tbody = document.getElementById("resultTableBody");
   tbody.innerHTML = "";
 
-  // Helper to safely get code regardless of casing
   const getCode = (sub) => {
       const code = sub.examCode || sub.exam_code || "";
       return code.toString().trim();
   };
 
-  // 1. Check valid semesters
   const selectedSemesters = studentData.semesters.filter(sem =>
     sem.subjects.some(sub => getCode(sub) === SELECTED_EXAM_CODE)
   );
-
-  // Debug: If empty, show what codes ARE available
-  if (selectedSemesters.length === 0) {
-      console.warn("No semesters matched code:", SELECTED_EXAM_CODE);
-      const allCodes = studentData.semesters.flatMap(s => s.subjects.map(sub => getCode(sub)));
-      console.log("Available codes in data:", [...new Set(allCodes)]);
-  }
 
   let semForHeading = null;
   let subsForHeading = [];
 
   selectedSemesters.forEach(sem => {
-    // 2. Filter subjects safely
     const filteredSubs = sem.subjects.filter(
       sub => getCode(sub) === SELECTED_EXAM_CODE
     );
@@ -720,7 +708,6 @@ function renderResultTable(studentData) {
     const sgpa = calculateSGPA(filteredSubs);
     const status = detectResult(filteredSubs);
 
-    // Render subject rows
     filteredSubs.forEach(sub => {
       const isFail = sub.grade?.toUpperCase().trim() === "F";
       const tr = document.createElement("tr");
@@ -736,7 +723,6 @@ function renderResultTable(studentData) {
       tbody.appendChild(tr);
     });
 
-    // Semester SGPA row
     const ht = document.getElementById("hallTicketInput").value.trim().toUpperCase();
     const officialLink = `http://results.jntuh.ac.in/results/resultAction?degree=btech&examCode=${SELECTED_EXAM_CODE}&etype=r17&result=null&grad=null&type=intgrade&htno=${ht}`;
 
@@ -754,7 +740,6 @@ function renderResultTable(studentData) {
     tbody.appendChild(sgpaRow);
   });
 
-  // Heading Logic
   if (semForHeading && subsForHeading.length > 0) {
     const semText = convertSemToRomanText(semForHeading);
     document.getElementById("resultYearHeading").innerText = `Results of ${semText} B.Tech Exams`;
@@ -762,7 +747,6 @@ function renderResultTable(studentData) {
     document.getElementById("resultYearHeading").innerText = "No Results for Exam Code " + SELECTED_EXAM_CODE;
   }
 
-  // Footer GPA
   const finalSubs = selectedSemesters.flatMap(s => s.subjects)
                     .filter(s => getCode(s) === SELECTED_EXAM_CODE);
 
@@ -770,7 +754,6 @@ function renderResultTable(studentData) {
   document.getElementById("resultStatus").innerText = studentData.result || detectResult(finalSubs);
 }
 
-// 🔥 Main fetch (no missing anything)
 async function fetchLiveResults() {
   const ht = document.getElementById("hallTicketInput").value.trim().toUpperCase();
   const loader = document.getElementById("loadingState");
@@ -785,39 +768,21 @@ async function fetchLiveResults() {
   resultBox.classList.add("hidden");
 
   try {
-    console.log("Fetching for:", ht);
     const res = await fetch(API_BASE_URL + ht);
     const json = await res.json();
-    
-    console.log("API Response:", json); 
-
-    // 1. Get the data container
     let studentData = json.data || json;
 
-    // 🛠️ FIX START: Handle Stringified Cache Data
     if (typeof studentData === "string") {
-        console.warn("Received stringified data, attempting to parse...");
-        try {
-            // Check if it uses single quotes (Python style) and replace with double quotes
-            // NOTE: This assumes names don't have apostrophes (e.g. O'Connor might break this simple fix)
-            if (studentData.includes("'")) {
-                studentData = studentData.replace(/'/g, '"');
-            }
-            studentData = JSON.parse(studentData);
-        } catch (e) {
-            console.error("Failed to parse cached data string:", e);
-            throw new Error("Server returned unreadable cached data.");
+        if (studentData.includes("'")) {
+            studentData = studentData.replace(/'/g, '"');
         }
+        studentData = JSON.parse(studentData);
     }
-    // 🛠️ FIX END
 
-    // 2. Now validate the structure
     if (!studentData || !studentData.semesters) {
-        console.error("Bad Data Structure:", studentData);
         throw new Error("Student data is missing semester details.");
     }
 
-    // Fill student panel info
     document.getElementById("resName").innerText = studentData.name || "---";
     document.getElementById("resRoll").innerText = studentData.hallTicket || ht;
     document.getElementById("resFather").innerText = studentData.fatherName || "---";
@@ -825,7 +790,6 @@ async function fetchLiveResults() {
     document.getElementById("resCollege").innerText = studentData.college || "—";  
     document.getElementById("resBranch").innerText = studentData.branch || "---";
 
-    // Render ONLY selected exam results
     renderResultTable(studentData);
 
     loader.classList.add("hidden");
@@ -840,7 +804,6 @@ async function fetchLiveResults() {
   }
 }
 
-
 // 🧪 BETA POPUP LOGIC
 window.onload = function () {
   showBetaPopup();
@@ -850,7 +813,6 @@ function showBetaPopup() {
   const popup = document.createElement("div");
   popup.id = "betaPopup";
   popup.className = "fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999] flex items-center justify-center";
-
   popup.innerHTML = `
     <div class="bg-white text-black w-[320px] p-5 rounded-xl shadow-2xl animate-reveal relative">
       <button onclick="closeBetaPopup()" 
@@ -869,31 +831,31 @@ function showBetaPopup() {
       </div>
     </div>
   `;
-
   document.body.appendChild(popup);
+  // 🔒 LOCK SCROLL
+  document.body.style.overflow = "hidden";
 }
 
 function closeBetaPopup() {
   document.getElementById("betaPopup")?.remove();
+  // 🔓 UNLOCK SCROLL
+  document.body.style.overflow = "";
 }
 
-    function toggleMobileMenu() {
+function toggleMobileMenu() {
     const menu = document.getElementById("mobileMenu");
-    const icon = document.querySelector('nav button i'); // Targets the hamburger icon
+    const icon = document.querySelector('nav button i');
     
     if (menu.classList.contains("hidden")) {
-        // Open Menu
         menu.classList.remove("hidden");
-        menu.classList.add("animate-reveal"); // Adds your slide-up animation
-        if (icon) icon.className = "fas fa-times"; // Change to 'X' icon
+        menu.classList.add("animate-reveal");
+        if (icon) icon.className = "fas fa-times";
     } else {
-        // Close Menu
         menu.classList.add("hidden");
-        if (icon) icon.className = "fas fa-bars"; // Change back to Hamburger
+        if (icon) icon.className = "fas fa-bars";
     }
 }
 
-/* ---------- FEEDBACK LOGIC (Includes Page Title) ---------- */
 async function sendFeedback() {
   const nameInput = document.getElementById("feedbackName");
   const msgInput = document.getElementById("feedbackMessage");
@@ -901,14 +863,8 @@ async function sendFeedback() {
   const status = document.getElementById("feedbackStatus");
   const rollElement = document.getElementById("resRoll");
 
-  // 1. Get Values
   const name = nameInput?.value.trim() || "Anonymous";
   const feedback = msgInput?.value.trim();
-  const roll = (rollElement && rollElement.innerText !== "---") 
-                ? rollElement.innerText 
-                : "General Visitor"; 
-  
-  // 2. GET CURRENT PAGE TITLE (Extracts just the main part)
   const pageTitle = document.title.split("|")[0].trim(); 
 
   if (!feedback) {
@@ -916,22 +872,16 @@ async function sendFeedback() {
     return;
   }
 
-  // UI Updates
   const originalBtnText = btn.innerText;
   btn.innerText = "SENDING...";
   btn.disabled = true;
   status.classList.add("hidden"); 
 
   try {
-    // 3. Send 'page' variable to Backend
-    // Note: If testing locally, keep http://localhost:3000. If on Vercel, use /api/send-whatsapp
     const response = await fetch("/api/send-whatsapp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        feedback, 
-        page: pageTitle // <--- Sending the page title here
-      })
+      body: JSON.stringify({ feedback, page: pageTitle })
     });
 
     const result = await response.json();
@@ -946,7 +896,6 @@ async function sendFeedback() {
     }
 
   } catch (err) {
-    console.error("Feedback Error:", err);
     status.innerText = "❌ Failed to send";
     status.classList.remove("hidden", "text-green-500");
     status.classList.add("text-red-500");
