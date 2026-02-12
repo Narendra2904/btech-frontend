@@ -260,6 +260,21 @@
             <h1 class="text-3xl md:text-4xl font-black heading-tight mb-3 text-white">JNTUH B.Tech <span class="text-yellow-accent"> RESULTS</span></h1>
             <p class="text-zinc-500 text-sm max-w-md mx-auto leading-relaxed">R22 Regular/Supply Results Released. Enter your HallTicket below.</p>
         </div>
+<div class="relative flex-grow">
+  <select 
+    id="examCodeSelect"
+    class="w-full bg-black/60 border border-zinc-700/50 rounded-xl px-5 py-3.5 text-sm font-bold uppercase tracking-widest input-focus text-yellow-accent">
+    
+    <option value="">SELECT EXAM CODE</option>
+    <option value="1942">1942 - III-I Regular</option>
+    <option value="1943">1943 - III-I Supply</option>
+    <option value="1944">1944 - III-II Regular</option>
+    <option value="1945">1945 - III-II Supply</option>
+    <option value="1946">1946 - IV-I Regular</option>
+    <option value="1947">1947 - IV-I Supply</option>
+
+  </select>
+</div>
 
         <div class="bg-zinc-900/30 p-5 rounded-2xl border border-zinc-800/50 shadow-2xl mb-10 group relative overflow-hidden search-container-box">
             <div id="loadingProgress" class="absolute top-0 left-0 loader-bar"></div>
@@ -282,6 +297,7 @@
                     <span>Fetch Results</span>
                     <i class="fas fa-bolt text-[10px] group-hover:animate-bounce"></i>
                 </button>
+                
             </div>
             <p id="errorMsg" class="hidden mt-4 text-[11px] font-bold text-red-400 items-center justify-center bg-red-400/5 py-2 rounded-lg border border-red-400/10 animate-reveal">
                 <i class="fas fa-shield-alt mr-2"></i> <span id="errorText"></span>
@@ -645,7 +661,7 @@ document.getElementById("socialPopup")
   });
 
 
-const SELECTED_EXAM_CODE = ["1942", "1943", "1944", "1945", "1946", "1947"];
+let SELECTED_EXAM_CODE = null;
 const API_BASE_URL = "https://jntuh-backend-7rad.onrender.com/result/";
 
 // Convert semester like 3-1 → III-I (table use only)
@@ -760,6 +776,7 @@ async function fetchLiveResults() {
   const resultBox = document.getElementById("resultContainer");
   const errorBox = document.getElementById("errorMsg");
   const errorText = document.getElementById("errorText");
+  const examSelect = document.getElementById("examCodeSelect");
 
   if (!ht) return;
 
@@ -773,16 +790,17 @@ async function fetchLiveResults() {
     let studentData = json.data || json;
 
     if (typeof studentData === "string") {
-        if (studentData.includes("'")) {
-            studentData = studentData.replace(/'/g, '"');
-        }
-        studentData = JSON.parse(studentData);
+      if (studentData.includes("'")) {
+        studentData = studentData.replace(/'/g, '"');
+      }
+      studentData = JSON.parse(studentData);
     }
 
     if (!studentData || !studentData.semesters) {
-        throw new Error("Student data is missing semester details.");
+      throw new Error("Student data is missing semester details.");
     }
 
+    /* Fill Student Info */
     document.getElementById("resName").innerText = studentData.name || "---";
     document.getElementById("resRoll").innerText = studentData.hallTicket || ht;
     document.getElementById("resFather").innerText = studentData.fatherName || "---";
@@ -790,11 +808,34 @@ async function fetchLiveResults() {
     document.getElementById("resCollege").innerText = studentData.college || "—";  
     document.getElementById("resBranch").innerText = studentData.branch || "---";
 
-    renderResultTable(studentData);
+    /* 🔥 Populate Exam Codes Dynamically */
+    const examSet = new Set();
+
+    studentData.semesters.forEach(sem => {
+      sem.subjects.forEach(sub => {
+        const code = sub.examCode || sub.exam_code;
+        if (code) examSet.add(code.toString().trim());
+      });
+    });
+
+    examSelect.innerHTML = '<option value="">SELECT EXAM CODE</option>';
+
+    examSet.forEach(code => {
+      examSelect.innerHTML += `<option value="${code}">${code}</option>`;
+    });
+
+    /* 🧠 When user selects exam */
+    examSelect.onchange = function () {
+      SELECTED_EXAM_CODE = this.value;
+
+      if (SELECTED_EXAM_CODE) {
+        renderResultTable(studentData);
+        resultBox.classList.remove("hidden");
+        resultBox.classList.add("animate-reveal");
+      }
+    };
 
     loader.classList.add("hidden");
-    resultBox.classList.remove("hidden");
-    resultBox.classList.add("animate-reveal");
 
   } catch (err) {
     console.error(err);
@@ -803,6 +844,7 @@ async function fetchLiveResults() {
     errorBox.classList.remove("hidden");
   }
 }
+
 
 // 🧪 BETA POPUP LOGIC
 window.onload = function () {
@@ -907,6 +949,11 @@ async function sendFeedback() {
     }, 3000);
   }
 }
+    document.getElementById("examCodeSelect")
+  .addEventListener("change", function () {
+    SELECTED_EXAM_CODE = this.value;
+  });
+
 </script>
 
 </body>
