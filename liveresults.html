@@ -841,7 +841,30 @@ async function fetchLiveResults() {
   }
 }
 
+    examSelect.innerHTML = '<option value="">SELECT EXAM CODE</option>';
 
+    const examCodes = [...examSet];
+    examCodes.forEach(code => {
+      examSelect.innerHTML += `<option value="${code}">${code}</option>`;
+    });
+
+    // Auto-select first exam code if available
+    if (examCodes.length > 0) {
+      SELECTED_EXAM_CODE = examCodes[0];
+      examSelect.value = SELECTED_EXAM_CODE;
+      renderResultTable(studentData);
+      resultBox.classList.remove("hidden");
+      resultBox.classList.add("animate-reveal");
+    }
+
+    examSelect.onchange = function () {
+      SELECTED_EXAM_CODE = this.value;
+      if (SELECTED_EXAM_CODE) {
+        renderResultTable(studentData);
+        resultBox.classList.remove("hidden");
+        resultBox.classList.add("animate-reveal");
+      }
+    };
 // 🧪 BETA POPUP LOGIC
 window.onload = function () {
   showBetaPopup();
