@@ -807,7 +807,7 @@ async function fetchLiveResults() {
     const fixedExamCode = examSelect.value || "1961";
     SELECTED_EXAM_CODE = fixedExamCode;
 
-    examSelect.innerHTML = `<option value="${fixedExamCode}" selected>${fixedExamCode}</option>`;
+    examSelect.innerHTML = `<option value="${fixedExamCode}" selected>IV-II Regular April/May 2026</option>`;
 
     // Show only the selected exam code results
     renderResultTable(studentData);
