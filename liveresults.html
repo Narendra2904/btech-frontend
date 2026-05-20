@@ -796,15 +796,13 @@ async function fetchLiveResults() {
       throw new Error("Student data is missing semester details.");
     }
 
-    /* Fill Student Info */
     document.getElementById("resName").innerText = studentData.name || "---";
     document.getElementById("resRoll").innerText = studentData.hallTicket || ht;
     document.getElementById("resFather").innerText = studentData.fatherName || "---";
     document.getElementById("resCollegeCode").innerText = studentData.collegeCode || "---";
-    document.getElementById("resCollege").innerText = studentData.college || "—";  
+    document.getElementById("resCollege").innerText = studentData.college || "—";
     document.getElementById("resBranch").innerText = studentData.branch || "---";
 
-    /* 🔥 Populate Exam Codes Dynamically */
     const examSet = new Set();
 
     studentData.semesters.forEach(sem => {
@@ -816,14 +814,13 @@ async function fetchLiveResults() {
 
     examSelect.innerHTML = '<option value="">SELECT EXAM CODE</option>';
 
-    examSet.forEach(code => {
+    const examCodes = [...examSet];
+    examCodes.forEach(code => {
       examSelect.innerHTML += `<option value="${code}">${code}</option>`;
     });
 
-    /* 🧠 When user selects exam */
     examSelect.onchange = function () {
       SELECTED_EXAM_CODE = this.value;
-
       if (SELECTED_EXAM_CODE) {
         renderResultTable(studentData);
         resultBox.classList.remove("hidden");
@@ -831,24 +828,6 @@ async function fetchLiveResults() {
       }
     };
 
-    loader.classList.add("hidden");
-
-  } catch (err) {
-    console.error(err);
-    loader.classList.add("hidden");
-    errorText.innerText = err.message || "Failed to load results";
-    errorBox.classList.remove("hidden");
-  }
-}
-
-    examSelect.innerHTML = '<option value="">SELECT EXAM CODE</option>';
-
-    const examCodes = [...examSet];
-    examCodes.forEach(code => {
-      examSelect.innerHTML += `<option value="${code}">${code}</option>`;
-    });
-
-    // Auto-select first exam code if available
     if (examCodes.length > 0) {
       SELECTED_EXAM_CODE = examCodes[0];
       examSelect.value = SELECTED_EXAM_CODE;
@@ -857,14 +836,14 @@ async function fetchLiveResults() {
       resultBox.classList.add("animate-reveal");
     }
 
-    examSelect.onchange = function () {
-      SELECTED_EXAM_CODE = this.value;
-      if (SELECTED_EXAM_CODE) {
-        renderResultTable(studentData);
-        resultBox.classList.remove("hidden");
-        resultBox.classList.add("animate-reveal");
-      }
-    };
+    loader.classList.add("hidden");
+  } catch (err) {
+    console.error(err);
+    loader.classList.add("hidden");
+    errorText.innerText = err.message || "Failed to load results";
+    errorBox.classList.remove("hidden");
+  }
+}
 // 🧪 BETA POPUP LOGIC
 window.onload = function () {
   showBetaPopup();
