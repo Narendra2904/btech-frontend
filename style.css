@@ -276,5 +276,5 @@ body {
 .animate-marquee {
     display: inline-block;
     min-width: 100%;
-    animation: marquee 18s linear infinite;
+    animation: marquee 1s linear infinite;
 }
