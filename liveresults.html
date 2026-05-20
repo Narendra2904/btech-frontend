@@ -803,38 +803,16 @@ async function fetchLiveResults() {
     document.getElementById("resCollege").innerText = studentData.college || "—";
     document.getElementById("resBranch").innerText = studentData.branch || "---";
 
-    const examSet = new Set();
+        // Use only the code already given in the dropdown
+    const fixedExamCode = examSelect.value || "1961";
+    SELECTED_EXAM_CODE = fixedExamCode;
 
-    studentData.semesters.forEach(sem => {
-      sem.subjects.forEach(sub => {
-        const code = sub.examCode || sub.exam_code;
-        if (code) examSet.add(code.toString().trim());
-      });
-    });
+    examSelect.innerHTML = `<option value="${fixedExamCode}" selected>${fixedExamCode}</option>`;
 
-    examSelect.innerHTML = '<option value="">SELECT EXAM CODE</option>';
-
-    const examCodes = [...examSet];
-    examCodes.forEach(code => {
-      examSelect.innerHTML += `<option value="${code}">${code}</option>`;
-    });
-
-    examSelect.onchange = function () {
-      SELECTED_EXAM_CODE = this.value;
-      if (SELECTED_EXAM_CODE) {
-        renderResultTable(studentData);
-        resultBox.classList.remove("hidden");
-        resultBox.classList.add("animate-reveal");
-      }
-    };
-
-    if (examCodes.length > 0) {
-      SELECTED_EXAM_CODE = examCodes[0];
-      examSelect.value = SELECTED_EXAM_CODE;
-      renderResultTable(studentData);
-      resultBox.classList.remove("hidden");
-      resultBox.classList.add("animate-reveal");
-    }
+    // Show only the selected exam code results
+    renderResultTable(studentData);
+    resultBox.classList.remove("hidden");
+    resultBox.classList.add("animate-reveal");
 
     loader.classList.add("hidden");
   } catch (err) {
@@ -948,7 +926,7 @@ async function sendFeedback() {
   }
 }
     
-  });
+
 
 </script>
 
