@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Get JNTUH Class results instantly without server issues." />
+  <title>CLASS RESULTS | BACK.BENCHERS</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/png" href="./assets/fav.png">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="min-h-screen flex flex-col bg-black text-white">
+
+  <nav class="border-b border-zinc-800/60 bg-black/80 backdrop-blur-xl sticky top-0 z-50">
+    <div class="max-w-full lg:max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3 group cursor-pointer shrink-0" onclick="window.location.href='index.html'">
+        <img src="./assets/fav.png" alt="Backbenchers Logo" class="w-8 h-8 rounded-md transition-transform duration-300 group-hover:scale-110 shadow-md" />
+        <div class="bg-yellow-accent text-black font-black px-2 py-0.5 text-sm rounded-sm transition-transform duration-300 group-hover:-rotate-2" style="background-color:#fbbf24;">
+          BACK
+        </div>
+        <span class="font-extrabold text-lg tracking-tighter transition-colors duration-300 group-hover:text-yellow-accent">
+          BENCHERS
+        </span>
+      </div>
+
+      <div class="hidden md:flex flex-1 justify-center">
+        <div class="flex items-center space-x-4 lg:space-x-6 font-bold text-[10px] uppercase tracking-widest text-zinc-500">
+          <a href="/" class="nav-link hover:text-yellow-accent">Home</a>
+          <a href="/result" class="nav-link hover:text-yellow-accent">All Results</a>
+          <a href="/liveresults" class="nav-link hover:text-yellow-accent">Live Results</a>
+          <a href="/classresult" class="nav-link hover:text-yellow-accent">Class Results</a>
+          <a href="/backlog" class="nav-link hover:text-yellow-accent">Backlog Report</a>
+          <a href="/creditChecker" class="nav-link hover:text-yellow-accent">Credit Checker</a>
+          <a href="/compare" class="nav-link hover:text-yellow-accent">Compare</a>
+          <a href="https://btech-notes.vercel.app" class="nav-link hover:text-yellow-accent">Notes</a>
+        </div>
+      </div>
+
+      <div class="hidden lg:flex items-center gap-2 text-[10px] font-bold text-zinc-500 bg-zinc-900/50 px-3 py-1.5 rounded-full border border-zinc-800/50">
+        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+        SERVER: ACTIVE
+      </div>
+    </div>
+  </nav>
+
+  <main class="flex-grow max-w-6xl mx-auto w-full px-6 py-12">
+    <div class="mb-8 no-print">
+      <a href="index.html" class="inline-flex items-center gap-2 px-4 py-2 bg-zinc-900/50 border border-zinc-800 rounded-xl text-zinc-400 text-[10px] font-black uppercase tracking-widest hover:border-yellow-accent hover:text-yellow-accent transition-all group">
+        <i class="fas fa-chevron-left text-[8px] group-hover:-translate-x-1 transition-transform"></i>
+        Back to Dashboard
+      </a>
+    </div>
+
+    <div class="text-center mb-10">
+      <p id="timeGreeting" class="text-yellow-accent text-[10px] font-black uppercase tracking-[0.3em] mb-2 opacity-0 transition-opacity duration-1000">Good Day Bro</p>
+      <h1 class="text-4xl md:text-5xl font-black mb-4">Class<span class="text-yellow-accent">Results</span></h1>
+      <p class="text-zinc-500 text-sm max-w-md mx-auto leading-relaxed">
+        Select year-sem and enter starting and ending hall ticket numbers to fetch all students in the class.
+      </p>
+    </div>
+
+    <div class="bg-zinc-900/30 p-5 rounded-2xl border border-zinc-800/50 shadow-2xl mb-10 group relative overflow-hidden search-container-box">
+      <div class="flex flex-col gap-3 relative z-10">
+        <select
+          id="yearSemSelect"
+          class="w-full bg-black/60 border border-zinc-700/50 rounded-xl px-5 py-3.5 text-sm font-bold uppercase tracking-widest text-yellow-accent outline-none focus:border-yellow-accent"
+        >
+          <option value="">SELECT YEAR - SEM</option>
+          <option value="I-I">I-I</option>
+          <option value="I-II">I-II</option>
+          <option value="II-I">II-I</option>
+          <option value="II-II">II-II</option>
+          <option value="III-I">III-I</option>
+          <option value="III-II">III-II</option>
+          <option value="IV-I">IV-I</option>
+          <option value="IV-II">IV-II</option>
+        </select>
+
+        <div class="grid md:grid-cols-3 gap-3">
+          <input
+            type="text"
+            id="startHallTicketInput"
+            placeholder="STARTING HALL TICKET"
+            class="w-full bg-black/60 border border-zinc-700/50 rounded-xl px-5 py-3.5 text-sm font-bold uppercase tracking-widest text-yellow-accent outline-none focus:border-yellow-accent"
+          >
+
+          <input
+            type="text"
+            id="endHallTicketInput"
+            placeholder="ENDING HALL TICKET"
+            class="w-full bg-black/60 border border-zinc-700/50 rounded-xl px-5 py-3.5 text-sm font-bold uppercase tracking-widest text-yellow-accent outline-none focus:border-yellow-accent"
+          >
+
+          <button
+            onclick="fetchClassResults()"
+            class="bg-yellow-accent hover:bg-yellow-400 active:scale-95 text-black font-extrabold px-10 py-3.5 rounded-xl transition-all flex items-center justify-center space-x-2 text-xs uppercase tracking-widest shadow-[0_0_20px_rgba(255,215,0,0.15)]"
+          >
+            <span>Fetch Data</span>
+            <i class="fas fa-users text-[10px] group-hover:animate-bounce"></i>
+          </button>
+        </div>
+      </div>
+
+      <p id="errorMsg" class="hidden mt-4 text-red-400 text-[11px] font-bold flex items-center justify-center bg-red-400/5 py-2 rounded-lg border border-red-400/10">
+        <i class="fas fa-shield-alt mr-2"></i>
+        <span id="errorText"></span>
+      </p>
+    </div>
+
+    <div id="loadingState" class="hidden flex flex-col items-center justify-center py-16">
+      <div class="relative">
+        <div class="w-12 h-12 border-2 border-zinc-800 rounded-full"></div>
+        <div class="w-12 h-12 border-t-2 border-yellow-accent rounded-full animate-spin absolute top-0 left-0"></div>
+      </div>
+      <p class="text-zinc-600 font-bold uppercase tracking-[0.4em] text-[10px] mt-6">Decrypting Class Database...</p>
+    </div>
+
+    <div id="printAllWrap" class="hidden mb-4 flex justify-end no-print">
+  <button
+    type="button"
+    onclick="printAllResults()"
+    class="bg-yellow-accent hover:bg-yellow-400 text-black font-black px-6 py-3.5 rounded-xl text-[10px] uppercase tracking-widest shadow-[0_0_15px_rgba(255,215,0,0.2)] flex items-center justify-center transition-all active:scale-95 group"
+  >
+    <i class="fas fa-file-pdf text-red-600 mr-2 text-[14px] group-hover:scale-110 transition-transform"></i> 
+    Save as PDF
+  </button>
+</div>
+
+    <div id="resultContainer" class="hidden space-y-10"></div>
+  </main>
+
+ <footer class="bg-black border-t border-zinc-900 pt-10 pb-5 px-6 relative">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+
+    <!-- BRAND -->
+    <div>
+      <div class="flex items-center space-x-3 mb-6 group cursor-pointer">
+        <img
+          src="./assets/fav.png"
+          alt="Backbenchers Logo"
+          class="w-10 h-10 rounded-md shadow-lg
+                 transition-transform duration-300
+                 group-hover:scale-110 group-hover:rotate-3"
+        />
+        <div>
+          <p class="font-extrabold text-lg tracking-tight text-zinc-200
+                    group-hover:text-yellow-accent transition-colors">
+            BACKBENCHERS
+          </p>
+          <p class="text-[10px] uppercase tracking-[0.35em] text-zinc-600 font-black">
+            Results Engine
+          </p>
+        </div>
+      </div>
+
+      <p class="text-zinc-600 text-[11px] leading-relaxed max-w-xs font-medium uppercase tracking-wider">
+        Fast. Free. Reliable.  
+        Built by students, for students.
+      </p>
+        <div class="mt-6">
+    <a href="https://expo.dev/artifacts/eas/hUXNz5RPAG1R9Wc8K8geDb.apk" 
+       class="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-xl group hover:border-yellow-accent transition-all">
+       <div class="w-8 h-8 bg-yellow-accent rounded-lg flex items-center justify-center text-black group-hover:scale-110 transition-transform">
+         <i class="fas fa-robot text-sm"></i>
+       </div>
+       <div>
+         <p class="text-[10px] font-black uppercase tracking-widest text-zinc-200 leading-none">Android App</p>
+         <p class="text-[9px] text-zinc-500 font-bold mt-1">v1.0.0 • Download APK</p>
+       </div>
+    </a>
+  </div>
+    </div>
+
+    <!-- SOCIALS -->
+    <div>
+      <h4 class="font-black text-[10px] text-zinc-500 uppercase tracking-[0.3em] mb-6">
+        Connect With Us
+      </h4>
+
+      <div class="flex space-x-5">
+        <!-- Instagram -->
+        <button onclick="openPopup('instagram')"
+          class="social-btn">
+          <i class="fab fa-instagram"></i>
+        </button>
+
+        <!-- GitHub -->
+        <button onclick="openPopup('github')"
+          class="social-btn">
+          <i class="fab fa-github"></i>
+        </button>
+
+        <!-- LinkedIn -->
+        <button onclick="openPopup('linkedin')"
+          class="social-btn">
+          <i class="fab fa-linkedin-in"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- FEEDBACK -->
+    <div>
+      <div class="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/60">
+        <h4 class="font-black text-[10px] uppercase tracking-[0.3em] mb-4 text-zinc-500">
+          Feedback
+        </h4>
+        <input
+        id="feedbackMessage"
+          type="text"
+          placeholder="Any issues?"
+          class="w-full bg-black border border-zinc-800 rounded-lg
+                 px-4 py-2.5 text-xs mb-3
+                 focus:border-yellow-accent outline-none"
+        />
+    <button
+  id="feedbackBtn"
+  onclick="sendFeedback()"
+  class="w-full bg-yellow-accent text-black font-black
+         py-2.5 rounded-lg text-[10px]
+         hover:bg-yellow-400 transition-all uppercase tracking-widest">
+  SEND
+</button>
+
+<p id="feedbackStatus"
+   class="hidden mt-3 text-[10px] font-black uppercase tracking-widest text-green-500 text-center">
+  ✅ Feedback Sent
+</p>
+
+
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="max-w-7xl mx-auto border-t border-zinc-900/50 pt-4
+              flex flex-col md:flex-row justify-between items-center
+              text-[9px] font-black text-zinc-700 uppercase tracking-[0.3em]">
+    <p>Developed by<span class="text-green-600">NARENDRA YENAGANDULA | MADHAN MYANA</span></p>
+    <p>© 2025 Backbenchers</p>
+  </div>
+
+
+    <!-- SOCIAL POPUP -->
+<div id="socialPopup"
+     class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[9999]
+            hidden flex items-center justify-center">
+
+  <div class="relative bg-white text-black w-[320px] shadow-2xl">
+
+    <!-- Close -->
+    <button onclick="closePopup()"
+      class="absolute top-3 right-3 w-8 h-8 border border-black
+             flex items-center justify-center font-black">
+      ✕
+    </button>
+
+    <!-- Header -->
+    <div class="flex flex-col items-center px-6 pt-10 pb-6">
+      <div id="popupIcon"
+           class="w-14 h-14 flex items-center justify-center mb-4">
+        <!-- icon injected by JS -->
+      </div>
+
+      <h2 id="popupTitle"
+          class="text-lg font-black tracking-widest uppercase">
+        INSTAGRAM
+      </h2>
+
+      <p class="text-[10px] text-gray-500 uppercase tracking-[0.25em] mt-1">
+        Select a developer to connect
+      </p>
+    </div>
+
+    <!-- USERS -->
+    <div id="popupUsers" class="px-6 pb-8 space-y-4">
+    </div>
+
+  </div>
+</div>
+
+
+  </div>
+  <div id="app-download-notification" 
+     style="display: none; z-index: 9999;" 
+     class="fixed bottom-6 left-6 right-6 md:left-auto md:right-6 md:max-w-md animate-reveal">
+    
+    <div class="bg-zinc-900 border-2 border-yellow-accent p-4 rounded-2xl shadow-[0_0_30px_rgba(255,215,0,0.15)] flex items-center gap-4 relative overflow-hidden">
+        <div class="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white/5 opacity-40 group-hover:animate-shine"></div>
+
+        <button type="button" 
+                onclick="window.closeAppNotification()" 
+                class="absolute top-2 right-2 text-zinc-500 hover:text-yellow-accent transition-colors p-1 z-50">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div class="bg-yellow-accent/10 border border-yellow-accent/30 w-12 h-12 rounded-xl flex items-center justify-center shrink-0">
+            <i class="fas fa-mobile-alt text-yellow-accent text-xl"></i>
+        </div>
+
+        <div class="flex-grow pr-4">
+            <h4 class="font-black text-xs uppercase tracking-widest text-yellow-accent leading-none">Download Android App</h4>
+            <p class="text-[10px] text-zinc-400 font-bold mt-1 leading-tight">Get your results and notes even faster with our native app.</p>
+        </div>
+
+        <a href="https://expo.dev/artifacts/eas/hUXNz5RPAG1R9Wc8K8geDb.apk" 
+           class="bg-yellow-accent hover:bg-yellow-400 text-black font-black px-4 py-2 rounded-lg text-[9px] uppercase tracking-widest transition-all active:scale-95 shadow-lg flex items-center gap-2">
+            Get <i class="fas fa-download text-[8px]"></i>
+        </a>
+    </div>
+</div>
+</footer>
+
+  <script>
+
+
+    const SOCIAL_DATA = {
+  instagram: {
+    title: "INSTAGRAM",
+    color: "bg-pink-500",
+    icon: '<i class="fab fa-instagram text-white text-2xl"></i>',
+    users: [
+      { name: "Narendra Yenagandula", url: "https://instagram.com/narendra_yenagandula" },
+      { name: "Madhan Myana", url: "https://instagram.com/madhan.myana" }
+    ]
+  },
+  github: {
+    title: "GITHUB",
+    color: "bg-black",
+    icon: '<i class="fab fa-github text-white text-2xl"></i>',
+    users: [
+      { name: "Narendra Yenagandula", url: "https://github.com/Narendra2904" },
+      { name: "Madhan Myana", url: "https://github.com/madhanmyana" }
+    ]
+  },
+  linkedin: {
+    title: "LINKEDIN",
+    color: "bg-blue-600",
+    icon: '<i class="fab fa-linkedin-in text-white text-2xl"></i>',
+    users: [
+      { name: "Narendra Yenagandula", url: "https://www.linkedin.com/in/narendra-yenagandula/" },
+      { name: "Madhan Myana", url: "https://www.linkedin.com/in/madhan-myana-7ab90a335/" }
+    ]
+  }
+};
+
+function openPopup(type) {
+  const popup = document.getElementById("socialPopup");
+  const title = document.getElementById("popupTitle");
+  const iconBox = document.getElementById("popupIcon");
+  const usersBox = document.getElementById("popupUsers");
+
+  const data = SOCIAL_DATA[type];
+  if (!data) return;
+
+  title.innerText = data.title;
+  iconBox.className = `w-14 h-14 flex items-center justify-center mb-4 ${data.color}`;
+  iconBox.innerHTML = data.icon;
+
+  usersBox.innerHTML = "";
+  data.users.forEach(u => {
+    const a = document.createElement("a");
+    a.href = u.url;
+    a.target = "_blank";
+    a.className =
+      "flex justify-between items-center border border-black px-4 py-3 font-bold hover:bg-black hover:text-white transition";
+    a.innerHTML = `<span>${u.name}</span><span>→</span>`;
+    usersBox.appendChild(a);
+  });
+
+  popup.classList.remove("hidden");
+}
+
+function closePopup() {
+  document.getElementById("socialPopup").classList.add("hidden");
+}
+
+// click outside popup to close
+document.getElementById("socialPopup")
+  .addEventListener("click", e => {
+    if (e.target.id === "socialPopup") closePopup();
+  });
+
+    const baseUrl = "https://jntuh-backend-7rad.onrender.com";
+    let fetchedStudents = [];
+    let selectedYearSem = "";
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const greeting = document.getElementById("timeGreeting");
+      if (greeting) greeting.style.opacity = "1";
+    });
+
+    function showError(message) {
+      const errorMsg = document.getElementById("errorMsg");
+      const errorText = document.getElementById("errorText");
+      errorText.textContent = message;
+      errorMsg.classList.remove("hidden");
+    }
+
+    window.onload = () => {
+    const g = document.getElementById("timeGreeting");
+    const h = new Date().getHours();
+    g.innerText =
+        h < 12 ? "— Good Morning  Bro—" :
+        h < 17 ? "— Good Afternoon Bro—" :
+                 "— Good Evening Bro—";
+    g.classList.remove("opacity-0");
+};
+    function clearError() {
+      document.getElementById("errorMsg").classList.add("hidden");
+      document.getElementById("errorText").textContent = "";
+    }
+
+    function generateHallTickets(startHT, endHT) {
+      const startPrefix = startHT.slice(0, -2);
+      const endPrefix = endHT.slice(0, -2);
+
+      if (startPrefix !== endPrefix) {
+        throw new Error("Both hall tickets must belong to the same series.");
+      }
+
+      const decodeSuffix = (suffix) => {
+        const firstChar = suffix.charCodeAt(0);
+        const secondChar = parseInt(suffix[1], 10);
+        let firstVal = 0;
+
+        if (firstChar >= 48 && firstChar <= 57) firstVal = (firstChar - 48) * 10;
+        else if (firstChar >= 65 && firstChar <= 90) firstVal = ((firstChar - 65) + 10) * 10;
+
+        return firstVal + secondChar;
+      };
+
+      const encodeSuffix = (num) => {
+        const tens = Math.floor(num / 10);
+        const ones = num % 10;
+        const firstChar = tens < 10
+          ? String.fromCharCode(48 + tens)
+          : String.fromCharCode(65 + (tens - 10));
+        return `${firstChar}${ones}`;
+      };
+
+      const startNum = decodeSuffix(startHT.slice(-2));
+      const endNum = decodeSuffix(endHT.slice(-2));
+
+      if (Number.isNaN(startNum) || Number.isNaN(endNum)) {
+        throw new Error("Invalid hall ticket number format.");
+      }
+
+      if (startNum > endNum) {
+        throw new Error("Starting hall ticket must be smaller than ending hall ticket.");
+      }
+
+      const tickets = [];
+      for (let i = startNum; i <= endNum; i++) {
+        tickets.push(startPrefix + encodeSuffix(i));
+      }
+      return tickets;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function normalizeKey(key) {
+      return String(key || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    }
+
+    function fuzzyFindValue(obj, wantedKeys) {
+      if (!obj || typeof obj !== "object") return null;
+      const wanted = wantedKeys.map(normalizeKey);
+
+      const stack = [obj];
+      const seen = new Set();
+
+      while (stack.length) {
+        const cur = stack.pop();
+        if (!cur || typeof cur !== "object" || seen.has(cur)) continue;
+        seen.add(cur);
+
+        for (const [k, v] of Object.entries(cur)) {
+          const nk = normalizeKey(k);
+          if (wanted.includes(nk) && v !== undefined && v !== null && v !== "") {
+            return v;
+          }
+          if (v && typeof v === "object") stack.push(v);
+        }
+      }
+      return null;
+    }
+
+    function asArray(value) {
+      if (Array.isArray(value)) return value;
+      if (value && typeof value === "object") return Object.values(value);
+      return [];
+    }
+
+    function isSemesterObject(item) {
+      return item && typeof item === "object" && !Array.isArray(item) && (
+        "subjects" in item ||
+        "rows" in item ||
+        "subjectList" in item ||
+        "data" in item ||
+        "semester" in item ||
+        "sem" in item ||
+        "semName" in item
+      );
+    }
+
+    function isSubjectRow(item) {
+      return item && typeof item === "object" && !Array.isArray(item) && (
+        "subCode" in item ||
+        "subcode" in item ||
+        "subjectCode" in item ||
+        "code" in item ||
+        "subjectName" in item ||
+        "subject" in item ||
+        "paperName" in item
+      );
+    }
+
+    function getResponseRoots(data) {
+      return [
+        data,
+        data?.details,
+        data?.Details,
+        data?.studentDetails,
+        data?.student,
+        data?.result,
+        data?.Result,
+        data?.data
+      ].filter(Boolean);
+    }
+
+    function pickStudentInfo(data, ht) {
+      const roots = getResponseRoots(data);
+
+      const findInRoots = (keys, fallback = "---") => {
+        for (const root of roots) {
+          const v = fuzzyFindValue(root, keys);
+          if (v !== null && v !== undefined && v !== "") return v;
+        }
+        return fallback;
+      };
+
+      return {
+        ht: ht || "---",
+        name: findInRoots(["name", "studentname", "studname", "fullname"]),
+        roll: findInRoots(["roll", "rollnumber", "htno", "hallticket", "hallticketno"], ht || "---"),
+        collegeCode: findInRoots(["collegecode", "colcode", "college_code", "cc"]),
+        father: findInRoots(["fathername", "father", "fname"]),
+        college: findInRoots(["collegename", "college", "institutionname"]),
+        branch: findInRoots(["branch", "branchname", "department", "course"])
+      };
+    }
+
+    function normalizeSubjectRow(row) {
+      if (!row || typeof row !== "object") {
+        return { subCode: "---", subjectName: "---", int: "-", ext: "-", total: "-", grade: "-", cr: "-" };
+      }
+
+      const subjectObj = (row.subject && typeof row.subject === "object") ? row.subject : {};
+      const combined = { ...subjectObj, ...row };
+
+      const get = (keys, fallback = "-") => {
+        const v = fuzzyFindValue(combined, keys);
+        return (v === null || v === undefined || v === "") ? fallback : v;
+      };
+
+      return {
+        subCode: get(["subcode", "subjectcode", "code", "papercode"], "---"),
+        subjectName: get(["subjectname", "subject", "subname", "name", "papername", "title"], "---"),
+        int: get(["int", "internal", "internalmarks", "ia", "cia"]),
+        ext: get(["ext", "external", "externalmarks"]),
+        total: get(["total", "totalmarks", "marks", "score", "obtainedmarks"]),
+        grade: get(["grade", "resultgrade", "gradepoint"]),
+        cr: get(["cr", "credits", "credit", "c"])
+      };
+    }
+
+    function normalizeSubjectList(input) {
+      return asArray(input)
+        .map(normalizeSubjectRow)
+        .filter(row => row.subjectName !== "---" || row.subCode !== "---");
+    }
+
+    const SEM_ALIAS_MAP = {
+      "I-I": ["I-I", "1-1", "11", "SEM1", "SEMESTER1", "S1", "1STSEM", "FIRSTSEM"],
+      "I-II": ["I-II", "1-2", "12", "SEM2", "SEMESTER2", "S2", "2NDSEM", "SECONDSEM"],
+      "II-I": ["II-I", "2-1", "21", "SEM3", "SEMESTER3", "S3", "3RDSEM", "THIRDSEM"],
+      "II-II": ["II-II", "2-2", "22", "SEM4", "SEMESTER4", "S4", "4THSEM", "FOURTHSEM"],
+      "III-I": ["III-I", "3-1", "31", "SEM5", "SEMESTER5", "S5"],
+      "III-II": ["III-II", "3-2", "32", "SEM6", "SEMESTER6", "S6"],
+      "IV-I": ["IV-I", "4-1", "41", "SEM7", "SEMESTER7", "S7"],
+      "IV-II": ["IV-II", "4-2", "42", "SEM8", "SEMESTER8", "S8"]
+    };
+
+    function semMatchesSelection(label, selected) {
+      const text = normalizeKey(label);
+      const sel = String(selected || "").toUpperCase();
+      const aliases = SEM_ALIAS_MAP[sel] || [sel];
+      return aliases.some(alias => text.includes(normalizeKey(alias)));
+    }
+
+        function extractSemesterList(data) {
+      const selectedSem = String(selectedYearSem || "").toUpperCase();
+      const matches = [];
+      const seen = new Set();
+      const bucketKeys = [
+        "subjects",
+        "rows",
+        "subjectList",
+        "data",
+        "marks",
+        "Marks",
+        "results",
+        "subjectRows"
+      ];
+
+      function addSemester(label, rawSubjects) {
+        const subjects = normalizeSubjectList(rawSubjects);
+        if (!subjects.length) return;
+
+        const signature = `${label}|${subjects
+          .map(s => `${s.subCode}:${s.subjectName}:${s.total}:${s.grade}`)
+          .join(";")}`;
+
+        if (seen.has(signature)) return;
+        seen.add(signature);
+
+        matches.push({
+          label: label || selectedSem || "Result",
+          subjects
+        });
+      }
+
+      function walk(node, inheritedLabel = "") {
+        if (!node) return;
+
+        if (Array.isArray(node)) {
+          if (node.some(isSubjectRow)) {
+            if (semMatchesSelection(inheritedLabel, selectedSem)) {
+              addSemester(inheritedLabel, node);
+            }
+          } else {
+            node.forEach(item => walk(item, inheritedLabel));
+          }
+          return;
+        }
+
+        if (typeof node !== "object") return;
+
+        const nodeLabel = String(
+          node.semester ||
+          node.sem ||
+          node.semName ||
+          node.yearSem ||
+          node.name ||
+          node.title ||
+          inheritedLabel ||
+          ""
+        );
+
+        for (const key of bucketKeys) {
+          const bucket = node[key];
+          if (bucket && semMatchesSelection(nodeLabel, selectedSem)) {
+            addSemester(nodeLabel, bucket);
+            break;
+          }
+        }
+
+        for (const [key, value] of Object.entries(node)) {
+          const childLabel = String(
+            value?.semester ||
+            value?.sem ||
+            value?.semName ||
+            value?.name ||
+            value?.title ||
+            key
+          );
+
+          if (value && typeof value === "object") {
+            if (
+              semMatchesSelection(key, selectedSem) ||
+              semMatchesSelection(childLabel, selectedSem) ||
+              semMatchesSelection(nodeLabel, selectedSem)
+            ) {
+              walk(value, childLabel);
+            } else {
+              walk(value, inheritedLabel);
+            }
+          }
+        }
+      }
+
+      walk(data);
+      return matches;
+    }
+
+    function getLatestSubjects(data) {
+
+  const semesters = extractSemesterList(data);
+
+  const latestMap = new Map();
+
+  for (const sem of semesters) {
+
+    /*
+      IMPORTANT:
+      keep ONLY selected sem
+    */
+
+    if (
+      !semMatchesSelection(
+        sem.label || "",
+        selectedYearSem
+      )
+    ) {
+      continue;
+    }
+
+    for (const row of (sem.subjects || [])) {
+
+      const normalized = normalizeSubjectRow(row);
+
+      const keyRaw =
+        normalized.subCode &&
+        normalized.subCode !== "---"
+          ? normalized.subCode
+          : normalized.subjectName;
+
+      const key = normalizeKey(keyRaw);
+
+      if (!key) continue;
+
+      /*
+        latest supply overwrite old regular
+      */
+      latestMap.set(key, normalized);
+    }
+  }
+
+  return Array.from(latestMap.values());
+}
+
+    function renderSubjectRows(subjects) {
+      if (!subjects || !subjects.length) {
+        return `
+          <tr>
+            <td colspan="7" class="px-4 py-5 text-center text-zinc-500 font-bold">
+              No subject data available
+            </td>
+          </tr>
+        `;
+      }
+
+      return subjects.map((row) => {
+        const s = normalizeSubjectRow(row);
+        return `
+          <tr class="border-b border-zinc-800 hover:bg-zinc-900/40">
+            <td class="px-3 md:px-4 py-3 border border-zinc-800">${escapeHtml(s.subCode)}</td>
+            <td class="px-3 md:px-4 py-3 border border-zinc-800 text-left">${escapeHtml(s.subjectName)}</td>
+            <td class="px-2 md:px-4 py-3 border border-zinc-800 text-center">${escapeHtml(s.int)}</td>
+            <td class="px-2 md:px-4 py-3 border border-zinc-800 text-center">${escapeHtml(s.ext)}</td>
+            <td class="px-2 md:px-4 py-3 border border-zinc-800 text-center">${escapeHtml(s.total)}</td>
+            <td class="px-2 md:px-4 py-3 border border-zinc-800 text-center font-black">${escapeHtml(s.grade)}</td>
+            <td class="px-2 md:px-4 py-3 border border-zinc-800 text-center">${escapeHtml(s.cr)}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderStudentCard(studentObj, index) {
+      const { ht, data } = studentObj;
+      const info = pickStudentInfo(data, ht);
+      const subjects = getLatestSubjects(data);
+
+      return `
+        <section id="student-${index}" class="student-card bg-zinc-900/30 p-5 md:p-6 rounded-2xl border border-zinc-800/50 shadow-2xl">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5">
+            <div>
+              <p class="text-[10px] uppercase tracking-[0.3em] text-zinc-500 font-black mb-1">Student ${index + 1}</p>
+              <h2 class="text-2xl font-black text-yellow-accent">${escapeHtml(ht)}</h2>
+            </div>
+            <div class="text-[10px] uppercase tracking-[0.3em] font-black text-zinc-500">
+              ${escapeHtml(info.name)}
+            </div>
+          </div>
+
+          <div class="info-table-container">
+            <table class="w-full border-collapse border-2 border-zinc-800 info-table">
+              <tbody class="block">
+                <tr class="grid grid-cols-3 border-b border-zinc-800">
+                  <td class="p-0 border-r border-zinc-800">
+                    <div class="px-2 md:px-4 py-2">
+                      <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">Name</p>
+                      <p class="font-bold text-[9px] md:text-[13px] truncate">${escapeHtml(info.name)}</p>
+                    </div>
+                  </td>
+                  <td class="p-0 border-r border-zinc-800">
+                    <div class="px-2 md:px-4 py-2">
+                      <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">Roll Number</p>
+                      <p class="font-bold text-[9px] md:text-[13px] text-yellow-accent">${escapeHtml(info.roll)}</p>
+                    </div>
+                  </td>
+                  <td class="p-0">
+                    <div class="px-2 md:px-4 py-2">
+                      <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">Col Code</p>
+                      <p class="font-bold text-[9px] md:text-[13px]">${escapeHtml(info.collegeCode)}</p>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr class="grid grid-cols-3">
+                  <td class="p-0 border-r border-zinc-800">
+                    <div class="px-2 md:px-4 py-2">
+                      <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">Father Name</p>
+                      <p class="font-bold text-[9px] md:text-[13px] truncate">${escapeHtml(info.father)}</p>
+                    </div>
+                  </td>
+                  <td class="p-0 border-r border-zinc-800">
+                    <div class="px-2 md:px-4 py-2">
+                      <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">College Name</p>
+                      <p class="font-bold text-[8px] md:text-[13px] leading-tight truncate">${escapeHtml(info.college)}</p>
+                    </div>
+                  </td>
+                  <td class="p-0">
+                    <div class="px-2 md:px-4 py-2">
+                      <p class="text-[7px] md:text-micro font-black text-zinc-500 uppercase">Branch</p>
+                      <p class="font-bold text-[9px] md:text-[13px] yellow-accent truncate">${escapeHtml(info.branch)}</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="mt-5 table-wrapper overflow-hidden rounded-xl border border-zinc-800 shadow-2xl">
+            <div class="overflow-x-auto">
+              <table class="boxed-table w-full min-w-[650px] md:min-w-full">
+                <thead>
+                  <tr class="bg-zinc-900/50 text-zinc-400 text-[9px] md:text-[10px] uppercase tracking-widest">
+                    <th class="px-3 md:px-4 py-3 border border-zinc-800">Sub Code</th>
+                    <th class="px-3 md:px-4 py-3 border border-zinc-800 text-left">Subject Name</th>
+                    <th class="px-2 md:px-4 py-3 border border-zinc-800 text-center">Int</th>
+                    <th class="px-2 md:px-4 py-3 border border-zinc-800 text-center">Ext</th>
+                    <th class="px-2 md:px-4 py-3 border border-zinc-800 text-center">Total</th>
+                    <th class="px-2 md:px-4 py-3 border border-zinc-800 text-center">Grade</th>
+                    <th class="px-2 md:px-4 py-3 border border-zinc-800 text-center">Cr</th>
+                  </tr>
+                </thead>
+                <tbody class="text-[11px] md:text-[12px]">
+                  ${renderSubjectRows(subjects)}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    
+
+    async function fetchClassResults() {
+      clearError();
+
+      selectedYearSem = document.getElementById("yearSemSelect").value.trim().toUpperCase();
+      const startHT = document.getElementById("startHallTicketInput").value.trim().toUpperCase();
+      const endHT = document.getElementById("endHallTicketInput").value.trim().toUpperCase();
+
+      const loadingState = document.getElementById("loadingState");
+      const resultContainer = document.getElementById("resultContainer");
+      const printAllWrap = document.getElementById("printAllWrap");
+
+      if (!selectedYearSem) {
+        showError("Please select Year-Sem.");
+        return;
+      }
+
+      if (!startHT || !endHT) {
+        showError("Please enter both starting and ending hall ticket numbers.");
+        return;
+      }
+
+      let hallTickets = [];
+      try {
+        hallTickets = generateHallTickets(startHT, endHT);
+      } catch (err) {
+        showError(err.message);
+        return;
+      }
+
+      loadingState.classList.remove("hidden");
+      resultContainer.classList.add("hidden");
+      printAllWrap.classList.add("hidden");
+      resultContainer.innerHTML = "";
+
+      try {
+        const allResults = [];
+
+        for (const ht of hallTickets) {
+          try {
+            const response = await fetch(`${baseUrl}/result/${encodeURIComponent(ht)}`);
+            if (!response.ok) continue;
+
+            let data;
+            try {
+              data = await response.json();
+            } catch (parseErr) {
+              console.log("Invalid JSON for:", ht);
+              continue;
+            }
+
+            allResults.push({ ht, data });
+          } catch (err) {
+            console.log("Skipped:", ht);
+          }
+        }
+
+        fetchedStudents = allResults;
+
+        if (!fetchedStudents.length) {
+          resultContainer.innerHTML = `
+            <div class="bg-zinc-900/30 p-6 rounded-2xl border border-zinc-800/50 text-center text-zinc-500 font-bold">
+              No Results Found
+            </div>
+          `;
+          printAllWrap.classList.add("hidden");
+        } else {
+          resultContainer.innerHTML = fetchedStudents
+            .map((student, index) => renderStudentCard(student, index))
+            .join("");
+
+          printAllWrap.classList.remove("hidden");
+        }
+
+        resultContainer.classList.remove("hidden");
+      } catch (err) {
+        console.log(err);
+        showError("Failed to fetch class results.");
+      } finally {
+        loadingState.classList.add("hidden");
+      }
+    }
+
+    // --- Paste this right above your closing
+
+    function printAllResults() {
+  const originalTitle = document.title;
+
+  const yearSem = document.getElementById("yearSemSelect")?.value?.trim().toUpperCase() || "CLASS_RESULTS";
+  const startHT = document.getElementById("startHallTicketInput")?.value?.trim().toUpperCase() || "";
+  const endHT = document.getElementById("endHallTicketInput")?.value?.trim().toUpperCase() || "";
+
+  document.title = `${yearSem}_${startHT}_${endHT}`.replace(/[^A-Z0-9_]/g, "_");
+
+  window.print();
+
+  setTimeout(() => {
+    document.title = originalTitle;
+  }, 150);
+}
+  </script>
+  
+</body>
+</html>
