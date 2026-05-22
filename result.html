@@ -38,6 +38,8 @@
                 <a href="/" class="nav-link hover:text-yellow-accent">Home</a>
                 <a href="/result" class="nav-link hover:text-yellow-accent border-b-2 border-yellow-accent pb-1">All Results</a>
                 <a href="/liveresults" class="nav-link hover:text-yellow-accent">Live Results</a>
+                <a href="/classresults" class="nav-link hover:text-yellow-accent">Class Results</a>
+                
                 <a href="/backlog" class="nav-link hover:text-yellow-accent">Backlog Report</a>
                 <a href="/creditChecker" class="nav-link hover:text-yellow-accent">Credit Checker</a>
                 <a href="/compare" class="nav-link hover:text-yellow-accent">Compare</a>
@@ -70,6 +72,7 @@
         <a href="/" class="block text-yellow-accent font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-home mr-3"></i> Home</a>
         <a href="/result" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-search mr-3"></i> All Results</a>
         <a href="/liveresults" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-bolt mr-3"></i> Live Results</a>
+        <a href="/classresults" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-bolt mr-3"></i> Class Results</a>
         <a href="/backlog" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-exclamation-triangle mr-3"></i> Backlog Report</a>
         <a href="/creditChecker" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-award mr-3"></i> Credit Checker</a>
          <a href="/compare" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-balance-scale mr-3"></i> Compare Results</a>
@@ -179,11 +182,38 @@
     </div>
 
     <div class="flex flex-col-reverse md:flex-row justify-between items-stretch md:items-center gap-3 no-print px-1">
+
+    <div class="flex gap-2">
+
+        <button
+            onclick="setResultView('academic')"
+            id="academicBtn"
+            class="px-5 py-3 rounded-xl text-[10px] uppercase tracking-widest font-black border-2 border-yellow-500 text-yellow-400 bg-black transition-all">
+            Academic Results
+        </button>
+
+        <button
+            onclick="setResultView('all')"
+            id="allBtn"
+            class="px-5 py-3 rounded-xl text-[10px] uppercase tracking-widest font-black border-2 border-zinc-700 text-zinc-400 bg-black transition-all">
+            All Results
+        </button>
+
+    </div>
+
+    <div class="flex gap-2">
+
         <button onclick="handlePrint()" class="bg-yellow-accent text-black font-black px-6 py-3.5 rounded-xl text-[10px] uppercase tracking-widest shadow-lg flex items-center justify-center transition-transform active:scale-95">
             <i class="fas fa-print mr-2"></i> Print Result
         </button>
-        <select id="semesterSelect" class="bg-black border-2 border-yellow-500 text-yellow-400 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-widest focus:outline-none"></select>
+
+        <select id="semesterSelect"
+            class="bg-black border-2 border-yellow-500 text-yellow-400 px-4 py-3 rounded-xl text-xs font-bold uppercase tracking-widest focus:outline-none">
+        </select>
+
     </div>
+
+</div>
 
     <div class="table-wrapper overflow-hidden rounded-xl border border-zinc-800 shadow-2xl">
         <div class="overflow-x-auto">
