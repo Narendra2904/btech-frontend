@@ -190,7 +190,7 @@ document.getElementById("resRoll").innerText = data.hallTicket;
 /* ================= GLOBAL STATE ================= */
 
 let FULL_RESULT = null;
-let CURRENT_VIEW = "all";
+let CURRENT_VIEW = "academic";
 
 const GRADE_POINTS = {
   "O": 10,
@@ -302,9 +302,11 @@ uniqueSemNames.forEach((semName) => {
     semSelect.appendChild(opt);
 });
 
-        semSelect.onchange = (e) => renderResult(e.target.value);
+        semSelect.onchange = () => renderResult();
 
-        renderResult("all");
+semSelect.value = "all";
+
+setResultView("academic");
         loading.classList.add("hidden");
         resultBox.classList.remove("hidden");
         createBurst();
@@ -347,76 +349,302 @@ function calculateCGPA(semesters) {
 }
 
 /* ================= CONSOLIDATED RENDER LOGIC ================= */
-function renderResult(mode) {
-    if (!FULL_RESULT || !Array.isArray(FULL_RESULT.semesters)) return;
-    const tbody = document.getElementById("resultTableBody");
-    tbody.innerHTML = "";
 
-    if (mode === "all") {
-        FULL_RESULT.semesters.forEach(sem => renderSemester(sem));
-        addOverallCGPA();
+
+function setResultView(view) {
+
+    CURRENT_VIEW = view;
+
+    const academicBtn =
+        document.getElementById("academicBtn");
+
+    const allBtn =
+        document.getElementById("allBtn");
+
+    if (view === "academic") {
+
+        academicBtn.classList.add(
+            "border-yellow-500",
+            "text-yellow-400"
+        );
+
+        academicBtn.classList.remove(
+            "border-zinc-700",
+            "text-zinc-400"
+        );
+
+        allBtn.classList.add(
+            "border-zinc-700",
+            "text-zinc-400"
+        );
+
+        allBtn.classList.remove(
+            "border-yellow-500",
+            "text-yellow-400"
+        );
+
     } else {
-        const semEntries = FULL_RESULT.semesters.filter(s => s.semester === mode);
-        if (semEntries.length > 0) {
-            const firstAttemptSem = { semester: mode, subjects: [] };
-            const seen = new Set();
-            semEntries.forEach(entry => {
-                entry.subjects.forEach(sub => {
-                    const code = sub.subjectCode || sub.code;
-                    if (!seen.has(code)) {
-                        seen.add(code);
-                        firstAttemptSem.subjects.push(sub);
-                    }
-                });
-            });
-            renderSemester(firstAttemptSem);
-        }
+
+        allBtn.classList.add(
+            "border-yellow-500",
+            "text-yellow-400"
+        );
+
+        allBtn.classList.remove(
+            "border-zinc-700",
+            "text-zinc-400"
+        );
+
+        academicBtn.classList.add(
+            "border-zinc-700",
+            "text-zinc-400"
+        );
+
+        academicBtn.classList.remove(
+            "border-yellow-500",
+            "text-yellow-400"
+        );
     }
+
+    renderResult();
 }
 
-function renderSemester(sem) {
+function renderResult() {
+
+    if (
+        !FULL_RESULT ||
+        !Array.isArray(FULL_RESULT.semesters)
+    ) return;
+
+    const tbody =
+        document.getElementById("resultTableBody");
+
+    tbody.innerHTML = "";
+
+    const semFilter =
+        document.getElementById("semesterSelect")
+        ?.value || "all";
+
+    const semestersToRender =
+        semFilter === "all"
+            ? FULL_RESULT.semesters
+            : FULL_RESULT.semesters.filter(
+                s => s.semester === semFilter
+            );
+
+    if (CURRENT_VIEW === "all") {
+
+        semestersToRender.forEach(sem => {
+            renderSemesterAllAttempts(sem);
+        });
+
+    } else {
+
+        const mergedSemesterMap = new Map();
+
+        semestersToRender.forEach(sem => {
+
+            const semName = sem.semester || "";
+
+            if (!mergedSemesterMap.has(semName)) {
+                mergedSemesterMap.set(semName, {
+                    semester: semName,
+                    examCode: sem.examCode || "",
+                    subjects: []
+                });
+            }
+
+            const bucket = mergedSemesterMap.get(semName);
+
+            bucket.subjects.push(...(sem.subjects || []));
+        });
+
+        Array.from(mergedSemesterMap.values()).forEach(sem => {
+            renderSemesterAcademic(sem);
+        });
+    }
+
+    addOverallCGPA();
+}
+
+function renderSemesterAcademic(sem) {
+
     addSemesterHeader(sem.semester);
-    const subjects = sem.subjects || [];
-    
-    // 1. Map to count occurrences of each subject in THIS semester
-    const subjectCounts = {};
-    subjects.forEach(sub => {
-        const code = sub.subjectCode || sub.code;
-        subjectCounts[code] = (subjectCounts[code] || 0) + 1;
+
+    const latestMap = new Map();
+
+    (sem.subjects || []).forEach(sub => {
+
+        const code =
+            sub.subjectCode || sub.code;
+
+        if (!code) return;
+
+        const prev =
+            latestMap.get(code);
+
+        const prevAttempt =
+            Number(prev?.attemptNumber || 0);
+
+        const currentAttempt =
+            Number(sub.attemptNumber || 0);
+
+        /*
+          latest attempt wins,
+          but old unique subjects stay too
+        */
+        if (!prev || currentAttempt >= prevAttempt) {
+            latestMap.set(code, sub);
+        }
     });
 
-    // 2. Track which codes we have already printed to identify the "repeat" row
-    const printedInThisSem = new Set();
+    const latestSubjects =
+        Array.from(latestMap.values());
 
-    const regularSubjects = subjects.filter(s => s.attempt === "regular");
-    const supplySubjects = subjects.filter(s => s.attempt === "supply" || s.attempt === "rcrv");
+    addSubHeader(
+        "ACADEMIC RESULTS",
+        sem.examCode || ""
+    );
 
-    // Render Regular
+    latestSubjects.forEach(sub => {
+        addRow(sub, false);
+    });
+
+    addSGPARow(
+        calculateSGPA(latestSubjects)
+    );
+}
+
+function renderSemesterAllAttempts(sem) {
+
+    addSemesterHeader(sem.semester);
+
+    const subjects =
+        sem.subjects || [];
+
+    const subjectCounts = {};
+
+    subjects.forEach(sub => {
+
+        const code =
+            sub.subjectCode || sub.code;
+
+        subjectCounts[code] =
+            (subjectCounts[code] || 0) + 1;
+
+    });
+
+    const printedInThisSem =
+        new Set();
+
+    const regularSubjects =
+        subjects.filter(
+            s => s.attempt === "regular"
+        );
+
+    const supplySubjects =
+        subjects.filter(
+            s =>
+                s.attempt === "supply" ||
+                s.attempt === "rcrv"
+        );
+
     if (regularSubjects.length > 0) {
-        addSubHeader("REGULAR RESULTS", regularSubjects[0].examCode || "");
+
+        addSubHeader(
+            "REGULAR RESULTS",
+            regularSubjects[0].examCode || ""
+        );
+
         regularSubjects.forEach(sub => {
-            const code = sub.subjectCode || sub.code;
-            // It is RC/RV ONLY if count > 1 AND we already printed one
-            const isRCRV = subjectCounts[code] > 1 && printedInThisSem.has(code);
+
+            const code =
+                sub.subjectCode || sub.code;
+
+            const isRCRV =
+                subjectCounts[code] > 1 &&
+                printedInThisSem.has(code);
+
             addRow(sub, isRCRV);
+
             printedInThisSem.add(code);
+
         });
+
     }
-    
-    // Render Supply
+
     if (supplySubjects.length > 0) {
-        const lastSupply = supplySubjects[supplySubjects.length - 1];
-        addSubHeader("SUPPLY RESULTS", lastSupply.examCode || "", lastSupply.attemptNumber || "");
-        
+
+        const lastSupply =
+            supplySubjects[
+            supplySubjects.length - 1
+            ];
+
+        addSubHeader(
+            "SUPPLY RESULTS",
+            lastSupply.examCode || "",
+            lastSupply.attemptNumber || ""
+        );
+
         supplySubjects.forEach(sub => {
-            const code = sub.subjectCode || sub.code;
-            // It is RC/RV ONLY if count > 1 AND we already printed one
-            const isRCRV = subjectCounts[code] > 1 && printedInThisSem.has(code);
+
+            const code =
+                sub.subjectCode || sub.code;
+
+            const isRCRV =
+                subjectCounts[code] > 1 &&
+                printedInThisSem.has(code);
+
             addRow(sub, isRCRV);
+
             printedInThisSem.add(code);
+
         });
+
     }
-    addSGPARow(calculateSGPA(subjects));
+
+    addSGPARow(
+        calculateSGPA(subjects)
+    );
+}
+
+function renderSemesterAcademic(sem) {
+
+    addSemesterHeader(
+        sem.semester
+    );
+
+    const latestMap =
+        new Map();
+
+    (sem.subjects || []).forEach(sub => {
+
+        const code =
+            sub.subjectCode || sub.code;
+
+        if (!code) return;
+
+        latestMap.set(code, sub);
+
+    });
+
+    const latestSubjects =
+        Array.from(latestMap.values());
+
+    addSubHeader(
+        "ACADEMIC RESULTS",
+        sem.examCode || ""
+    );
+
+    latestSubjects.forEach(sub => {
+
+        addRow(sub, false);
+
+    });
+
+    addSGPARow(
+        calculateSGPA(latestSubjects)
+    );
 }
 
 /* ================= TABLE HELPERS ================= */
