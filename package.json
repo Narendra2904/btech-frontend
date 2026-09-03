@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "🎓 JNTUH B.Tech Results Portal",
   "scripts": {
-    "dev": "echo \"Use vercel dev for local development\""
+    "start": "node server.js",
+    "dev": "node server.js"
   },
   "license": "ISC",
   "type": "module",

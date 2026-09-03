@@ -13,6 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="ai-bot.css">
 </head>
 <body class="min-h-screen flex flex-col">
 
@@ -202,7 +203,11 @@
 
     </div>
 
-    <div class="flex gap-2">
+    <div class="flex flex-wrap gap-2">
+
+        <button onclick="BackbenchersAI.ask('Full Academic Audit Report')" class="bg-zinc-900 border border-yellow-accent/50 hover:bg-yellow-accent hover:text-black text-yellow-accent font-black px-4 py-3 rounded-xl text-[10px] uppercase tracking-widest shadow-lg flex items-center justify-center transition-all active:scale-95 gap-2">
+            <i class="fas fa-robot"></i> AI Analysis
+        </button>
 
         <button onclick="handlePrint()" class="bg-yellow-accent text-black font-black px-6 py-3.5 rounded-xl text-[10px] uppercase tracking-widest shadow-lg flex items-center justify-center transition-transform active:scale-95">
             <i class="fas fa-print mr-2"></i> Print Result
@@ -420,6 +425,7 @@
 </div>
 </footer>
 <script src="script.js"></script>
+<script src="ai-bot.js" defer></script>
 </body>
 </html>
 

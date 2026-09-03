@@ -10,6 +10,7 @@
   <link rel="icon" type="image/png" href="./assets/fav.png">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="ai-bot.css">
 </head>
 
 <body class="min-h-screen flex flex-col bg-black text-white">
@@ -788,8 +789,13 @@ document.getElementById("socialPopup")
               <p class="text-[10px] uppercase tracking-[0.3em] text-zinc-500 font-black mb-1">Student ${index + 1}</p>
               <h2 class="text-2xl font-black text-yellow-accent">${escapeHtml(ht)}</h2>
             </div>
-            <div class="text-[10px] uppercase tracking-[0.3em] font-black text-zinc-500">
-              ${escapeHtml(info.name)}
+            <div class="flex items-center gap-3">
+              <div class="text-[10px] uppercase tracking-[0.3em] font-black text-zinc-500">
+                ${escapeHtml(info.name)}
+              </div>
+              <button onclick="BackbenchersAI.loadStudent('${escapeHtml(ht)}')" class="bg-zinc-900 border border-yellow-accent/40 text-yellow-accent hover:bg-yellow-accent hover:text-black px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all flex items-center gap-1.5 active:scale-95 shadow-sm">
+                <i class="fas fa-robot"></i> Ask AI
+              </button>
             </div>
           </div>
 
@@ -967,6 +973,7 @@ document.getElementById("socialPopup")
   }, 150);
 }
   </script>
+  <script src="ai-bot.js" defer></script>
   
 </body>
 </html>

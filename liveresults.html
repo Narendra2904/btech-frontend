@@ -12,6 +12,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="ai-bot.css">
     <!-- Custom Config for Tailwind Colors to match your design -->
     <script>
         tailwind.config = {
@@ -371,10 +372,14 @@
             </div>
 
             <div class="flex flex-col-reverse md:flex-row justify-between items-stretch md:items-center gap-3 no-print px-1">
-                <button onclick="window.print()" class="bg-yellow-accent text-black font-black px-6 py-3.5 rounded-xl text-[10px] uppercase tracking-widest shadow-lg flex items-center justify-center transition-transform active:scale-95 hover:bg-yellow-400">
-                    <i class="fas fa-print mr-2"></i> Print Memo
-                </button>
-                
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="BackbenchersAI.ask('Full Academic Audit Report')" class="bg-zinc-900 border border-yellow-accent/40 text-yellow-accent hover:bg-yellow-accent hover:text-black font-black px-6 py-3.5 rounded-xl text-[10px] uppercase tracking-widest shadow-lg flex items-center justify-center transition-all active:scale-95 gap-2">
+                        <i class="fas fa-robot"></i> AI Analysis
+                    </button>
+                    <button onclick="window.print()" class="bg-yellow-accent text-black font-black px-6 py-3.5 rounded-xl text-[10px] uppercase tracking-widest shadow-lg flex items-center justify-center transition-transform active:scale-95 hover:bg-yellow-400">
+                        <i class="fas fa-print mr-2"></i> Print Memo
+                    </button>
+                </div>
             </div>
 
             <div class="table-wrapper overflow-hidden rounded-xl border border-zinc-800 shadow-2xl bg-zinc-900/20">
@@ -935,6 +940,7 @@ async function sendFeedback() {
 
 
 </script>
+<script src="ai-bot.js" defer></script>
 
 </body>
 </html>

@@ -26,6 +26,8 @@ A fast, modern, mobile-friendly JNTUH results website built with a custom backen
 
 📊 Vercel Analytics enabled
 
+🤖 Backbenchers AI Automated Bot (Supplies, Improvement Areas, Promotion & Credit Detention Check, Target CGPA Calculator, RC/RV Advice)
+
 
 🏗️ Tech Stack
 Frontend

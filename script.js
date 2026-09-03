@@ -91,21 +91,6 @@ document.querySelectorAll('#mobileMenu a').forEach(link => {
         if (icon) icon.className = "fas fa-bars";
     });
 });
-function calculateCGPA(semesters) {
-    let totalCredits = 0;
-    let totalPoints = 0;
-
-    semesters.forEach(sem => {
-        sem.subjects.forEach(sub => {
-            const gp = GRADE_POINTS[sub.grade] ?? 0;
-            const credits = parseFloat(sub.credits || 0);
-            totalCredits += credits;
-            totalPoints += gp * credits;
-        });
-    });
-
-    return totalCredits === 0 ? "0.00" : (totalPoints / totalCredits).toFixed(2);
-}
 
 
 
@@ -608,44 +593,7 @@ function renderSemesterAllAttempts(sem) {
     );
 }
 
-function renderSemesterAcademic(sem) {
 
-    addSemesterHeader(
-        sem.semester
-    );
-
-    const latestMap =
-        new Map();
-
-    (sem.subjects || []).forEach(sub => {
-
-        const code =
-            sub.subjectCode || sub.code;
-
-        if (!code) return;
-
-        latestMap.set(code, sub);
-
-    });
-
-    const latestSubjects =
-        Array.from(latestMap.values());
-
-    addSubHeader(
-        "ACADEMIC RESULTS",
-        sem.examCode || ""
-    );
-
-    latestSubjects.forEach(sub => {
-
-        addRow(sub, false);
-
-    });
-
-    addSGPARow(
-        calculateSGPA(latestSubjects)
-    );
-}
 
 /* ================= TABLE HELPERS ================= */
 function addSemesterHeader(semName) {
@@ -767,24 +715,7 @@ document.getElementById("hallTicketInput")
 
 
 
-function handlePrint() {
-    // Save the original title
-    const originalTitle = document.title;
-    
-    // Set the title to the Roll Number (e.g., 22S41A6695.pdf)
-    const rollNo = document.getElementById("resRoll").innerText.trim();
-    if (rollNo && rollNo !== "---") {
-        document.title = rollNo;
-    }
-    
-    // Open print dialog
-    window.print();
-    
-    // Restore the original title after printing starts
-    setTimeout(() => {
-        document.title = originalTitle;
-    }, 100);
-}
+
 
   // Global function to close the notification
   window.closeAppNotification = function() {
@@ -1345,7 +1276,6 @@ async function sendFeedback() {
             s.style.setProperty("--y", e.clientY + "px");
         });
 
-        function toggleMobileMenu() { document.getElementById("mobileMenu").classList.toggle("hidden"); }
 
         async function fetchBacklogReport() {
             const ht = document.getElementById("hallTicketInput").value.trim().toUpperCase();
@@ -1454,23 +1384,53 @@ async function sendFeedback() {
             });
         }
 
-        function handlePrint() {
-            const originalTitle = document.title;
-            const rollNo = document.getElementById("resRoll").innerText.trim();
-            if (rollNo && rollNo !== "---") { document.title = rollNo; }
-            window.print();
-            setTimeout(() => { document.title = originalTitle; }, 100);
-        }
+
         document.querySelectorAll('nav a').forEach(link => {
-    link.addEventListener('click', function(e) {
-        // If it's an internal link (Home or Backlog)
-        if (this.getAttribute('href').endsWith('.html')) {
-            const loader = document.getElementById('loadingProgress');
-            if (loader) {
-                loader.style.width = '100%'; // Trigger the yellow bar at the top
-            }
+            link.addEventListener('click', function(e) {
+                // If it's an internal link (Home or Backlog)
+                if (this.getAttribute('href').endsWith('.html')) {
+                    const loader = document.getElementById('loadingProgress');
+                    if (loader) {
+                        loader.style.width = '100%'; // Trigger the yellow bar at the top
+                    }
+                }
+            });
+        });
+
+/* ---------- Deep Linking / URL Query Param Auto-Loader ---------- */
+window.addEventListener("DOMContentLoaded", () => {
+    const params = new URLSearchParams(window.location.search);
+    const ht = params.get("ht");
+    const sem = params.get("sem");
+    if (!ht) return;
+
+    const resInput = document.getElementById("hallTicketInput");
+    if (resInput) {
+        resInput.value = ht;
+        if (typeof searchResult === "function" && document.getElementById("resultContainer")) {
+            searchResult().then(() => {
+                if (sem) {
+                    setTimeout(() => {
+                        const semSel = document.getElementById("semesterSelect");
+                        if (semSel) {
+                            semSel.value = sem;
+                            if (typeof renderResult === "function") renderResult();
+                            const resBox = document.getElementById("resultContainer");
+                            if (resBox) resBox.scrollIntoView({ behavior: "smooth" });
+                        }
+                    }, 500);
+                }
+            });
+        } else if (typeof fetchBacklogReport === "function" && document.getElementById("backlogContainer")) {
+            fetchBacklogReport();
         }
-    });
+    }
+
+    const creditInput = document.getElementById("c_Roll") || document.getElementById("creditHTInput");
+    if (creditInput && typeof fetchCredits === "function") {
+        creditInput.value = ht;
+        fetchCredits();
+    }
 });
 
 

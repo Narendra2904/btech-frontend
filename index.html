@@ -14,6 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="ai-bot.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9649158905754864"
      crossorigin="anonymous"></script>
     <!-- Google tag (gtag.js) -->
@@ -205,6 +206,18 @@ Good Day Bro</p>
             <h3 class="text-xs font-black uppercase tracking-widest mb-1">Notes</h3>
             <p class="text-[9px] text-zinc-500 uppercase font-bold">Study Materials</p>
         </a>
+
+        <!-- Backbenchers AI Bot Card -->
+        <div onclick="BackbenchersAI.open()" class="cursor-pointer bg-gradient-to-br from-zinc-900/80 via-black to-zinc-950 border border-yellow-500/40 hover:border-yellow-accent p-6 rounded-2xl flex flex-col items-center justify-center text-center transition-all group active:scale-95 shadow-[0_0_30px_rgba(255,215,0,0.15)] relative overflow-hidden">
+            <div class="absolute top-2 right-2 bg-yellow-accent text-black text-[8px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest">
+                NEW • AI
+            </div>
+            <div class="w-12 h-12 bg-yellow-accent/15 rounded-full flex items-center justify-center mb-4 text-yellow-accent group-hover:bg-yellow-accent group-hover:text-black transition-all">
+                <i class="fas fa-robot text-lg"></i>
+            </div>
+            <h3 class="text-xs font-black uppercase tracking-widest mb-1 text-white group-hover:text-yellow-accent">AI Result Bot</h3>
+            <p class="text-[9px] text-zinc-400 uppercase font-bold">Supplies & Improvement</p>
+        </div>
     </div>
 
     
@@ -497,6 +510,7 @@ Good Day Bro</p>
         if (icon) icon.className = "fas fa-bars"; 
     }
   }
-
+</script>
+<script src="ai-bot.js" defer></script>
 </body>
 </html>
