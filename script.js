@@ -1204,77 +1204,111 @@ document.getElementById("hallTicketInput")?.addEventListener("keydown", (e) => {
        
 
 
-/* ---------- FEEDBACK LOGIC (Includes Page Title) ---------- */
-async function sendFeedback() {
+/* ---------- 100% FREE FEEDBACK SYSTEM (WhatsApp & Mail) ---------- */
+const FEEDBACK_CONFIG = {
+  // Developer WhatsApp number (if known, or can be set via window.FEEDBACK_PHONE)
+  phone: window.FEEDBACK_PHONE || "919014164344",
+  email: window.FEEDBACK_EMAIL || "narendrayenagandula05@gmail.com",
+};
+
+async function sendFeedback(preferredChannel) {
   const nameInput = document.getElementById("feedbackName");
   const msgInput = document.getElementById("feedbackMessage");
   const btn = document.getElementById("feedbackBtn");
   const status = document.getElementById("feedbackStatus");
-  const rollElement = document.getElementById("resRoll");
+  const rollElement = document.getElementById("resRoll") || document.getElementById("c_Roll");
 
   // 1. Get Values
   const name = nameInput?.value.trim() || "Anonymous";
   const feedback = msgInput?.value.trim();
-  const roll = (rollElement && rollElement.innerText !== "---") 
-                ? rollElement.innerText 
-                : "General Visitor"; 
-  
-  // 2. GET CURRENT PAGE TITLE (Extracts just the main part)
-  const pageTitle = document.title.split("|")[0].trim(); 
+  const roll = (rollElement && rollElement.innerText !== "---" && rollElement.innerText.trim()) 
+                ? rollElement.innerText.trim() 
+                : "Student Visitor"; 
+  const pageTitle = document.title.split("|")[0].trim() || "Backbenchers Portal"; 
 
   if (!feedback) {
-    alert("Please enter a message!");
+    alert("Please enter a feedback message!");
+    msgInput?.focus();
     return;
   }
 
-  // UI Updates
-  const originalBtnText = btn.innerText;
-  btn.innerText = "SENDING...";
-  btn.disabled = true;
-  status.classList.add("hidden"); 
+  // Format the feedback message nicely
+  const formattedText = `🎓 *Backbenchers Portal Feedback*\n📄 *Page:* ${pageTitle}\n👤 *Roll/User:* ${roll}\n💬 *Message:* ${feedback}\n⏰ *Time:* ${new Date().toLocaleString()}`;
+
+  const channel = preferredChannel || window.lastFeedbackChannel || "whatsapp";
+
+  if (btn) {
+    btn.dataset.origText = btn.innerHTML;
+    btn.innerText = "OPENING...";
+    btn.disabled = true;
+  }
+
+  if (status) {
+    status.classList.remove("hidden", "text-red-500", "text-green-500");
+    status.classList.add("text-yellow-500");
+    status.innerText = channel === "mail" ? "✉️ Opening Email..." : "💬 Opening WhatsApp...";
+  }
 
   try {
-    // 3. Send 'page' variable to Backend
-    // Note: If testing locally, keep http://localhost:3000. If on Vercel, use /api/send-whatsapp
-    const response = await fetch("/api/send-whatsapp", {
+    // Also passively notify backend if running
+    fetch("/api/send-whatsapp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        feedback, 
-        page: pageTitle // <--- Sending the page title here
-      })
-    });
+      body: JSON.stringify({ feedback, page: pageTitle, roll, channel })
+    }).catch(() => {});
 
-    const result = await response.json();
-
-    if (response.ok && result.ok) {
-       status.innerText = "✅ Feedback Sent";
-       status.classList.remove("hidden", "text-red-500");
-       status.classList.add("text-green-500");
-       msgInput.value = ""; 
+    if (channel === "mail") {
+      // 100% Free Mail dispatch via mailto:
+      const cleanBody = formattedText.replace(/\*/g, "");
+      const mailtoUrl = `mailto:${FEEDBACK_CONFIG.email}?subject=${encodeURIComponent("Feedback: " + pageTitle + " (" + roll + ")")}&body=${encodeURIComponent(cleanBody)}`;
+      window.open(mailtoUrl, "_blank");
+      if (status) {
+        status.innerText = "✅ Email Client Opened!";
+        status.classList.replace("text-yellow-500", "text-green-500");
+      }
     } else {
-       throw new Error(result.error || "Failed to send");
+      // 100% Free WhatsApp Click-to-Chat dispatch
+      const waUrl = FEEDBACK_CONFIG.phone 
+        ? `https://api.whatsapp.com/send?phone=${FEEDBACK_CONFIG.phone}&text=${encodeURIComponent(formattedText)}`
+        : `https://api.whatsapp.com/send?text=${encodeURIComponent(formattedText)}`;
+      window.open(waUrl, "_blank");
+      if (status) {
+        status.innerText = "✅ WhatsApp Opened!";
+        status.classList.replace("text-yellow-500", "text-green-500");
+      }
     }
 
+    if (msgInput) msgInput.value = "";
   } catch (err) {
-    console.error("Feedback Error:", err);
-    status.innerText = "❌ Failed to send";
-    status.classList.remove("hidden", "text-green-500");
-    status.classList.add("text-red-500");
+    console.error("Feedback dispatch error:", err);
+    if (status) {
+      status.innerText = "⚠️ Feedback opened";
+      status.classList.replace("text-yellow-500", "text-green-500");
+    }
   } finally {
     setTimeout(() => {
-      btn.innerText = originalBtnText;
-      btn.disabled = false;
-      status.classList.add("hidden");
-    }, 3000);
+      if (btn && btn.dataset.origText) {
+        btn.innerHTML = btn.dataset.origText;
+        btn.disabled = false;
+      }
+      setTimeout(() => {
+        if (status) status.classList.add("hidden");
+      }, 4000);
+    }, 1500);
   }
 }
-        // Interactive UI
-        document.addEventListener("mousemove", e => {
-            const s = document.getElementById("spotlight");
-            s.style.setProperty("--x", e.clientX + "px");
-            s.style.setProperty("--y", e.clientY + "px");
-        });
+
+// Expose globally
+window.sendFeedback = sendFeedback;
+
+// Interactive UI Spotlight (Safe null check)
+document.addEventListener("mousemove", e => {
+    const s = document.getElementById("spotlight");
+    if (s && s.style) {
+        s.style.setProperty("--x", e.clientX + "px");
+        s.style.setProperty("--y", e.clientY + "px");
+    }
+});
 
 
         async function fetchBacklogReport() {

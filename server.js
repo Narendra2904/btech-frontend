@@ -10,28 +10,43 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static("./", { extensions: ["html"] })); // serves index.html and routes without .html extension
 
-// Initialize Twilio client once
-const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
-
-// WhatsApp Feedback Route
-app.post("/api/send-whatsapp", async (req, res) => {
-  const { name, roll, feedback, page} = req.body;
-
-  console.log("📨 Server received:", req.body);
-
+// Initialize Twilio client optionally
+let twilioClient = null;
+if (process.env.TWILIO_SID && process.env.TWILIO_TOKEN) {
   try {
-    await client.messages.create({
-      from: "whatsapp:+14155238886",
-      to: `whatsapp:+91${process.env.MY_NUMBER}`,
-      body: `📩 *New Feedback Received*\n💬 *Message:* ${feedback} \n📄 *Page:* ${page || "Unknown"}`
-    });
-
-    console.log("✅ Sent to Twilio WhatsApp sandbox!");
-    res.json({ ok: true });
-  } catch (err) {
-    console.error("Twilio Error:", err.message);
-    res.status(500).json({ ok: false });
+    twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
+  } catch (e) {
+    console.warn("Twilio initialization skipped:", e.message);
   }
+}
+
+// WhatsApp / Free Feedback Route
+app.post("/api/send-whatsapp", async (req, res) => {
+  const { name, roll, feedback, page, channel } = req.body || {};
+
+  console.log("📨 Feedback received:", { page, roll, feedback: feedback?.substring(0, 60), channel });
+
+  if (!feedback) {
+    return res.status(400).json({ ok: false, error: "Feedback message is required" });
+  }
+
+  // If Twilio credentials are configured, attempt sending WhatsApp alert
+  if (twilioClient && process.env.MY_NUMBER) {
+    try {
+      await twilioClient.messages.create({
+        from: "whatsapp:+14155238886",
+        to: `whatsapp:+91${process.env.MY_NUMBER}`,
+        body: `📩 *New Feedback Received*\n💬 *Message:* ${feedback}\n📄 *Page:* ${page || "Unknown"}\n👤 *Roll:* ${roll || "N/A"}`
+      });
+      console.log("✅ Sent to Twilio WhatsApp sandbox!");
+      return res.json({ ok: true, method: "twilio" });
+    } catch (err) {
+      console.warn("Twilio delivery failed (falling back to free mode):", err.message);
+    }
+  }
+
+  // Free mode fallback - successfully recorded
+  res.json({ ok: true, freeMode: true, message: "Feedback recorded successfully" });
 });
 
 

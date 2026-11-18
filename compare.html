@@ -14,6 +14,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="ai-bot.css">
+    <script src="theme.js"></script>
 </head>
 <body class="min-h-screen flex flex-col">
 
@@ -48,36 +49,54 @@
             </div>
         </div>
 
-       <div class="flex items-center md:hidden gap-3">
-
+       <div class="flex items-center md:hidden gap-2">
       <!-- Server Active Indicator -->
-      <div class="flex items-center gap-2 text-[10px] font-black text-green-500 bg-zinc-900/50 px-3 py-1 rounded-full border border-zinc-800/50 shrink-0">
+      <div class="flex items-center gap-1.5 text-[9px] font-black text-green-500 bg-zinc-900/50 px-2.5 py-1 rounded-full border border-zinc-800/50 shrink-0">
+        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+        ACTIVE
+      </div>
+
+      <!-- Mobile Theme Toggle -->
+      <button onclick="toggleTheme()" class="theme-toggle-btn p-1.5 rounded-lg text-xs" title="Toggle Theme" aria-label="Toggle Theme">
+        <i class="fas fa-sun text-yellow-400"></i>
+      </button>
+
+      <!-- Hamburger Menu -->
+      <button onclick="toggleMobileMenu()" class="text-yellow-accent text-xl p-1.5 focus:outline-none hover:bg-zinc-900 rounded-lg transition-colors">
+        <i id="menuIcon" class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- DESKTOP Server Badge & Theme Toggle -->
+    <div class="hidden lg:flex items-center gap-3">
+      <div class="flex items-center gap-2 text-micro font-bold text-zinc-500 bg-zinc-900/50 px-3 py-1.5 rounded-full border border-zinc-800/50">
         <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
         SERVER: ACTIVE
       </div>
-
-      <!-- Hamburger Menu -->
-      <button onclick="toggleMobileMenu()" class="text-yellow-accent text-2xl p-2 focus:outline-none hover:bg-zinc-900 rounded-lg transition-colors">
-        <i id="menuIcon" class="fas fa-bars"></i>
+      <button onclick="toggleTheme()" class="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
+        <i class="fas fa-sun text-yellow-400"></i>
+        <span class="theme-label hidden sm:inline text-[9px] font-bold">LIGHT</span>
       </button>
-
+    </div>
     </div>
 
-        <div class="hidden lg:flex items-center gap-2 text-micro font-bold text-zinc-500 bg-zinc-900/50 px-3 py-1.5 rounded-full border border-zinc-800/50">
-            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-            SERVER: ACTIVE
-        </div>
-    </div>
-
-    <div id="mobileMenu" class="md:hidden hidden bg-black border-t border-zinc-800 absolute top-16 left-0 w-full z-50 px-6 py-8 space-y-6 shadow-2xl animate-reveal">
-        <a href="/" class="block text-yellow-accent font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-home mr-3"></i> Home</a>
+    <div id="mobileMenu" class="md:hidden hidden bg-black border-t border-zinc-800 absolute top-16 left-0 w-full z-50 px-6 py-6 space-y-4 shadow-2xl animate-reveal">
+        <a href="/" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-home mr-3"></i> Home</a>
         <a href="/result" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-search mr-3"></i> All Results</a>
         <a href="/liveresults" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-bolt mr-3"></i> Live Results</a>
-        <a href="/classresult" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-bolt mr-3"></i> Class Results</a>
+        <a href="/classresult" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-users mr-3"></i> Class Results</a>
         <a href="/backlog" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-exclamation-triangle mr-3"></i> Backlog Report</a>
         <a href="/creditChecker" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-award mr-3"></i> Credit Checker</a>
-         <a href="/compare" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-balance-scale mr-3"></i> Compare Results</a>
-        <a href="https://btech-notes.vercel.app" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2"><i class="fas fa-notes-medical mr-3"></i> Notes</a>
+         <a href="/compare" class="block text-yellow-accent font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-balance-scale mr-3"></i> Compare Results</a>
+        <a href="https://btech-notes.vercel.app" class="block text-zinc-400 font-black text-xs uppercase tracking-[0.2em] py-2 border-b border-zinc-900"><i class="fas fa-book-open mr-3"></i> Notes</a>
+
+        <div class="pt-2 flex justify-between items-center">
+          <span class="text-zinc-500 text-xs font-bold uppercase tracking-widest">Theme</span>
+          <button onclick="toggleTheme()" class="theme-toggle-btn">
+            <i class="fas fa-sun text-yellow-400"></i>
+            <span class="theme-label text-[9px] font-bold">LIGHT</span>
+          </button>
+        </div>
     </div>
 </nav>
 <main class="flex-grow max-w-7xl mx-auto w-full px-6 py-12">
@@ -200,35 +219,43 @@
       </div>
     </div>
 
-    <!-- FEEDBACK -->
+    <!-- FEEDBACK (100% Free WhatsApp / Mail) -->
     <div>
-      <div class="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/60">
-        <h4 class="font-black text-[10px] uppercase tracking-[0.3em] mb-4 text-zinc-500">
-          Feedback
-        </h4>
+      <div class="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/60 transition-all">
+        <div class="flex items-center justify-between mb-4">
+          <h4 class="font-black text-[10px] uppercase tracking-[0.3em] text-zinc-500">
+            Free Feedback
+          </h4>
+          <span class="text-[9px] font-bold text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full border border-green-500/20">
+            100% Free
+          </span>
+        </div>
         <input
-        id="feedbackMessage"
+          id="feedbackMessage"
           type="text"
-          placeholder="Any issues?"
-          class="w-full bg-black border border-zinc-800 rounded-lg
-                 px-4 py-2.5 text-xs mb-3
-                 focus:border-yellow-accent outline-none"
+          placeholder="Any issues or suggestions?"
+          class="w-full bg-black border border-zinc-800 rounded-lg px-4 py-2.5 text-xs mb-3 focus:border-yellow-accent outline-none text-zinc-200 transition-all"
         />
-    <button
-  id="feedbackBtn"
-  onclick="sendFeedback()"
-  class="w-full bg-yellow-accent text-black font-black
-         py-2.5 rounded-lg text-[10px]
-         hover:bg-yellow-400 transition-all uppercase tracking-widest">
-  SEND
-</button>
-
-<p id="feedbackStatus"
-   class="hidden mt-3 text-[10px] font-black uppercase tracking-widest text-green-500 text-center">
-  ✅ Feedback Sent
-</p>
-
-
+        <div class="grid grid-cols-2 gap-2">
+          <button
+            onclick="sendFeedback('whatsapp')"
+            class="bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-lg text-[10px] transition-all uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+            title="Send instantly via WhatsApp (Free)"
+          >
+            <i class="fab fa-whatsapp text-xs"></i> WhatsApp
+          </button>
+          <button
+            onclick="sendFeedback('mail')"
+            class="bg-yellow-accent hover:bg-yellow-400 text-black font-black py-2.5 rounded-lg text-[10px] transition-all uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+            title="Send via Email (Free)"
+          >
+            <i class="fas fa-envelope text-xs"></i> Mail
+          </button>
+        </div>
+        <p id="feedbackStatus"
+           class="hidden mt-3 text-[10px] font-black uppercase tracking-widest text-green-500 text-center">
+          ✅ Feedback Sent
+        </p>
       </div>
     </div>
   </div>

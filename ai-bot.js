@@ -486,6 +486,7 @@
     pills.addEventListener("click", (e) => {
       const btn = e.target.closest(".bb-ai-pill-btn");
       if (btn && btn.dataset.query) {
+        addUserMessage(btn.dataset.query);
         processUserQuery(btn.dataset.query);
       }
     });
@@ -503,6 +504,8 @@
     initVoiceInput();
   }
 
+  let isFetchingStudent = false;
+
   function bindGlobalEvents() {
     // Esc key closes chat
     document.addEventListener("keydown", (e) => {
@@ -518,8 +521,28 @@
       }
     });
 
-    // Observe changes to page student data
-    setInterval(checkForPageStudent, 2000);
+    // Debounced observer for page student changes
+    let checkTimeout = null;
+    function debouncedCheck() {
+      if (checkTimeout) clearTimeout(checkTimeout);
+      checkTimeout = setTimeout(checkForPageStudent, 600);
+    }
+
+    // Check on user interaction / results loaded
+    window.addEventListener("resultLoaded", debouncedCheck);
+    document.addEventListener("change", (e) => {
+      const id = e.target.id || "";
+      if (id.includes("hallTicket") || id.includes("Roll") || id.includes("credit")) {
+        debouncedCheck();
+      }
+    });
+
+    // Passive initial check
+    debouncedCheck();
+    // Low-frequency gentle sync (every 6 seconds, only when not fetching)
+    setInterval(() => {
+      if (!isFetchingStudent) checkForPageStudent();
+    }, 6000);
   }
 
   /* ==========================================================================
@@ -527,6 +550,8 @@
      ========================================================================== */
 
   function checkForPageStudent() {
+    if (isFetchingStudent) return;
+
     // 1. Check window.FULL_RESULT (used on index.html, result.html)
     if (window.FULL_RESULT && typeof window.FULL_RESULT === "object" && window.FULL_RESULT.hallTicket) {
       if (!state.currentStudent || state.currentStudent.hallTicket !== window.FULL_RESULT.hallTicket) {
@@ -554,21 +579,6 @@
         if (isHallTicket(text)) {
           if (!state.currentStudent || state.currentStudent.hallTicket !== text) {
             fetchStudentResult(text, false);
-            return;
-          }
-        }
-      }
-    }
-
-    // 4. Check active input fields (e.g. #hallTicketInput, #creditHTInput, #htInput)
-    const inputIds = ["hallTicketInput", "creditHTInput", "htInput"];
-    for (const id of inputIds) {
-      const el = document.getElementById(id);
-      if (el && el.value) {
-        const val = el.value.trim().toUpperCase();
-        if (isHallTicket(val)) {
-          if (!state.currentStudent || state.currentStudent.hallTicket !== val) {
-            fetchStudentResult(val, false);
             return;
           }
         }
@@ -611,7 +621,9 @@
   }
 
   async function fetchStudentResult(htno, showNotification = true) {
+    if (!htno || isFetchingStudent) return null;
     const cleanHt = htno.trim().toUpperCase();
+
     if (studentCache.has(cleanHt)) {
       const cached = studentCache.get(cleanHt);
       setStudentContext(cached);
@@ -622,11 +634,19 @@
       return cached;
     }
 
-    showTyping();
+    if (showNotification) {
+      showTyping();
+    }
+    isFetchingStudent = true;
+
     try {
-      const res = await fetch(`${CONFIG.apiBase}/result/${cleanHt}`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+      const res = await fetch(`${CONFIG.apiBase}/result/${cleanHt}`, { signal: controller.signal });
+      clearTimeout(timeoutId);
       const json = await res.json();
-      hideTyping();
+      if (showNotification) hideTyping();
 
       if (!json || !json.data) {
         throw new Error("Student record not found. Please verify the Hall Ticket number.");
@@ -645,7 +665,7 @@
       if (showNotification) {
         addBotMessage(
           `🎓 Hello <strong>${firstName}</strong>! Retrieved results for <strong>${cleanHt}</strong> (${data.branch || "B.Tech"}).<br>` +
-          `<span class="text-[11px] text-zinc-300 font-mono">Regulation: <strong>${profile.regulation}</strong> • ${profile.entryType} • ${profile.totalSemesters} Semesters (${profile.totalDegreeCredits} Total Credits)</span><br><br>` +
+          `<span class="text-[11px] text-zinc-400 font-mono">Regulation: <strong>${profile.regulation}</strong> • ${profile.entryType} • ${profile.totalSemesters} Semesters (${profile.totalDegreeCredits} Total Credits)</span><br><br>` +
           `What would you like to check? Choose an option below or type your question:`,
           [
             { action: "supplies", label: "⚠️ Check Supplies" },
@@ -657,11 +677,13 @@
       }
       return data;
     } catch (err) {
-      hideTyping();
       if (showNotification) {
+        hideTyping();
         addBotMessage(`❌ <strong>Could not fetch results for ${cleanHt}:</strong> ${err.message}`);
       }
       return null;
+    } finally {
+      isFetchingStudent = false;
     }
   }
 
@@ -1907,7 +1929,6 @@
     // 1. Check if user typed or mentioned a Hall Ticket number
     const htExtracted = extractHallTicket(query);
     if (htExtracted) {
-      addUserMessage(query, false); // in case called from chip
       await fetchStudentResult(htExtracted, true);
       return;
     }
@@ -2212,8 +2233,12 @@
   async function callAiBackend(query, student) {
     showTyping();
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+
       const response = await fetch(CONFIG.aiProxyUrl, {
         method: "POST",
+        signal: controller.signal,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: query,
@@ -2227,6 +2252,7 @@
             : null
         })
       });
+      clearTimeout(timeoutId);
 
       const data = await response.json();
       hideTyping();
@@ -2349,8 +2375,11 @@
       handleUserSend();
     };
 
-    recognition.onerror = () => {
+    recognition.onerror = (e) => {
       micBtn.classList.remove("bb-ai-mic-active");
+      if (e && e.error === "not-allowed") {
+        addBotMessage("🎙️ Microphone permission was denied. Please allow microphone access in your browser settings to speak.");
+      }
     };
 
     recognition.onend = () => {
@@ -2438,6 +2467,48 @@
     if (scroll) scrollToBottom();
   }
 
+  function formatBotText(content) {
+    if (!content || typeof content !== "string") return "";
+    // If it already looks like rich HTML cards or structures, return directly
+    if (content.includes("<div") || content.includes("<table") || content.includes("<ul") || content.includes("<p>")) {
+      return content;
+    }
+    return renderMarkdown(content);
+  }
+
+  function renderMarkdown(md) {
+    if (!md) return "";
+    let html = md
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*(.*?)\*/g, "<em>$1</em>")
+      .replace(/_(.*?)_/g, "<em>$1</em>")
+      .replace(/`([^`]+)`/g, "<code class='bg-zinc-800 text-yellow-400 px-1 py-0.5 rounded font-mono text-xs'>$1</code>")
+      .replace(/^### (.*$)/gim, "<h4 class='font-bold text-yellow-400 mt-2 mb-1 text-sm'>$1</h4>")
+      .replace(/^## (.*$)/gim, "<h3 class='font-black text-yellow-300 mt-3 mb-1 text-base'>$1</h3>")
+      .replace(/^# (.*$)/gim, "<h2 class='font-black text-yellow-200 mt-3 mb-2 text-lg'>$1</h2>")
+      .replace(/^\> (.*$)/gim, "<blockquote class='border-l-2 border-yellow-500 pl-2 italic text-zinc-300 my-1'>$1</blockquote>")
+      .replace(/^\s*[\*\-]\s+(.*)$/gim, "<li class='ml-4 list-disc'>$1</li>")
+      .replace(/^\s*\d+\.\s+(.*)$/gim, "<li class='ml-4 list-decimal'>$1</li>");
+
+    html = html.replace(/(<li class='ml-4 list-disc'>.*?<\/li>)+/gs, (match) => `<ul class='my-2 space-y-1'>${match}</ul>`);
+    html = html.replace(/(<li class='ml-4 list-decimal'>.*?<\/li>)+/gs, (match) => `<ol class='my-2 space-y-1'>${match}</ol>`);
+
+    const paragraphs = html.split(/\n\s*\n/);
+    return paragraphs
+      .map((p) => {
+        p = p.trim();
+        if (!p) return "";
+        if (p.startsWith("<h") || p.startsWith("<ul") || p.startsWith("<ol") || p.startsWith("<blockquote") || p.startsWith("<div") || p.startsWith("<p")) {
+          return p;
+        }
+        return `<p class='mb-2 leading-relaxed'>${p.replace(/\n/g, "<br>")}</p>`;
+      })
+      .join("");
+  }
+
   function addBotMessage(htmlContent, inlineButtons = null) {
     const feed = document.getElementById("bb-ai-messages-feed");
     if (!feed) return;
@@ -2445,6 +2516,7 @@
     const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     const msg = document.createElement("div");
     msg.className = "bb-ai-message bb-ai-message-bot";
+    const formattedHtml = formatBotText(htmlContent);
 
     let buttonsHtml = "";
     if (Array.isArray(inlineButtons) && inlineButtons.length > 0) {
@@ -2466,7 +2538,7 @@
         <i class="fas fa-robot"></i>
       </div>
       <div class="bb-ai-bubble">
-        <div>${htmlContent}</div>
+        <div>${formattedHtml}</div>
         ${buttonsHtml}
         <div class="bb-ai-time">${time}</div>
       </div>
