@@ -15,30 +15,31 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="ai-bot.css">
     <script src="theme.js"></script>
-    <!-- Google tag (gtag.js) - 100% Free Google Analytics 4 -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2WWBG5GD2Q"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-2WWBG5GD2Q', {
-        send_page_view: true
-      });
-      window.trackEvent = function(name, params) {
-        try { if (typeof gtag === "function") gtag("event", name, params || {}); } catch(e){}
-      };
-    </script>
     <!-- Google Tag Manager -->
+    <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-KGR8KD33"></script>
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-TJJ22GGG');</script>
+    })(window,document,'script','dataLayer','GTM-KGR8KD33');</script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      window.trackEvent = function(name, params) {
+        try {
+          window.dataLayer.push(Object.assign({ event: name }, params || {}));
+          if (typeof gtag === "function") gtag("event", name, params || {});
+        } catch(e){}
+      };
+    </script>
+    <!-- End Google Tag Manager -->
 </head>
 <body class="min-h-screen flex flex-col">
     <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TJJ22GGG"
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KGR8KD33"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
     <div id="spotlight"></div>
     <div id="burst-container"></div>
