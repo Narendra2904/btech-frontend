@@ -180,8 +180,30 @@
             box-shadow: 0 0 10px #FFD700;
         }
     </style>
+    <!-- Google tag (gtag.js) - 100% Free Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2WWBG5GD2Q"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2WWBG5GD2Q', {
+        send_page_view: true
+      });
+      window.trackEvent = function(name, params) {
+        try { if (typeof gtag === "function") gtag("event", name, params || {}); } catch(e){}
+      };
+    </script>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TJJ22GGG');</script>
 </head>
 <body class="min-h-screen flex flex-col">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TJJ22GGG"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div id="spotlight"></div>
 
@@ -395,7 +417,7 @@
                     <button onclick="BackbenchersAI.ask('Full Academic Audit Report')" class="bg-zinc-900 border border-yellow-accent/40 text-yellow-accent hover:bg-yellow-accent hover:text-black font-black px-6 py-3.5 rounded-xl text-[10px] uppercase tracking-widest shadow-lg flex items-center justify-center transition-all active:scale-95 gap-2">
                         <i class="fas fa-robot"></i> AI Analysis
                     </button>
-                    <button onclick="window.print()" class="bg-yellow-accent text-black font-black px-6 py-3.5 rounded-xl text-[10px] uppercase tracking-widest shadow-lg flex items-center justify-center transition-transform active:scale-95 hover:bg-yellow-400">
+                    <button onclick="window.trackEvent && window.trackEvent('print_memo', { type: 'live_results' }); window.print()" class="bg-yellow-accent text-black font-black px-6 py-3.5 rounded-xl text-[10px] uppercase tracking-widest shadow-lg flex items-center justify-center transition-transform active:scale-95 hover:bg-yellow-400">
                         <i class="fas fa-print mr-2"></i> Print Memo
                     </button>
                 </div>
@@ -462,6 +484,7 @@
       </p>
         <div class="mt-6">
     <a href="https://expo.dev/artifacts/eas/hUXNz5RPAG1R9Wc8K8geDb.apk" 
+       onclick="window.trackEvent && window.trackEvent('apk_download', { location: 'footer' });"
        class="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-xl group hover:border-yellow-accent transition-all">
        <div class="w-8 h-8 bg-yellow-accent rounded-lg flex items-center justify-center text-black group-hover:scale-110 transition-transform">
          <i class="fas fa-robot text-sm"></i>
@@ -603,6 +626,7 @@
         </div>
 
         <a href="https://expo.dev/artifacts/eas/hUXNz5RPAG1R9Wc8K8geDb.apk" 
+           onclick="window.trackEvent && window.trackEvent('apk_download', { location: 'banner' });"
            class="bg-yellow-accent hover:bg-yellow-400 text-black font-black px-4 py-2 rounded-lg text-[9px] uppercase tracking-widest transition-all active:scale-95 shadow-lg flex items-center gap-2">
             Get <i class="fas fa-download text-[8px]"></i>
         </a>
@@ -802,6 +826,12 @@ async function fetchLiveResults() {
 
   if (!ht) return;
 
+  if (typeof window.trackEvent === "function") {
+    window.trackEvent("live_results_fetch", {
+      college_code: ht.length >= 4 ? ht.substring(2, 4) : "UNKNOWN"
+    });
+  }
+
   loader.classList.remove("hidden");
   errorBox.classList.add("hidden");
   resultBox.classList.add("hidden");
@@ -937,6 +967,10 @@ async function sendFeedback(preferredChannel) {
     status.classList.remove("hidden", "text-red-500", "text-yellow-500");
     status.classList.add("text-green-500");
     status.innerText = "✅ Feedback Sent";
+  }
+
+  if (typeof window.trackEvent === "function") {
+    window.trackEvent("feedback_sent", { page: pageTitle, channel: channel });
   }
 
   try {

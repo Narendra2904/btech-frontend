@@ -1924,6 +1924,11 @@
   }
 
   async function processUserQuery(query) {
+    if (typeof window.trackEvent === "function") {
+      window.trackEvent("ai_query_asked", {
+        query_snippet: query.substring(0, 40)
+      });
+    }
     const qLower = query.toLowerCase();
 
     // 1. Check if user typed or mentioned a Hall Ticket number
@@ -2401,6 +2406,12 @@
     if (!win) return;
     win.classList.add("bb-ai-open");
     state.isOpen = true;
+
+    if (typeof window.trackEvent === "function") {
+      window.trackEvent("ai_bot_opened", {
+        device: window.innerWidth <= 640 ? "mobile" : "desktop"
+      });
+    }
 
     // Lock body scroll on mobile to avoid background scrolling
     if (window.innerWidth <= 640) {

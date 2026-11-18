@@ -234,6 +234,12 @@ async function searchResult() {
         return;
     }
 
+    if (typeof window.trackEvent === "function") {
+        window.trackEvent("search_result", {
+            college_code: htno.length >= 4 ? htno.substring(2, 4) : "UNKNOWN"
+        });
+    }
+
     loading.classList.remove("hidden");
 
     try {
@@ -690,6 +696,9 @@ function addOverallCGPA() {
 }
 
 function handlePrint() {
+    if (typeof window.trackEvent === "function") {
+        window.trackEvent("print_memo", { type: "student_result" });
+    }
     const originalTitle = document.title;
     const rollNo = document.getElementById("resRoll").innerText.trim();
     if (rollNo && rollNo !== "---") {
@@ -991,6 +1000,12 @@ async function fetchCredits() {
         error.classList.remove("hidden");
         return;
     }
+
+    if (typeof window.trackEvent === "function") {
+        window.trackEvent("credit_check", {
+            college_code: ht.length >= 4 ? ht.substring(2, 4) : "UNKNOWN"
+        });
+    }
     
     try {
         // Fetch data from the JNTUH Backend
@@ -1044,6 +1059,9 @@ function handleCreditPrint() {
     }
 
     // Trigger the print dialog
+    if (typeof window.trackEvent === "function") {
+        window.trackEvent("print_memo", { type: "credit_report" });
+    }
     window.print();
 
     // Restore original title after the dialog closes
@@ -1074,6 +1092,10 @@ async function compareResults() {
     const statusText = document.getElementById("compareStatusText");
     
     if (!ht1 || !ht2) return alert("Please enter both Hall Ticket numbers");
+
+    if (typeof window.trackEvent === "function") {
+        window.trackEvent("compare_students");
+    }
 
     area.classList.add("hidden");
     loader.classList.remove("hidden");
@@ -1160,6 +1182,9 @@ function renderCompareColumn(columnId, data) {
 }
 
 function handleComparePrint() {
+    if (typeof window.trackEvent === "function") {
+        window.trackEvent("print_memo", { type: "comparison_report" });
+    }
     const originalTitle = document.title;
     const h1 = document.getElementById("ht1").value.trim().toUpperCase();
     const h2 = document.getElementById("ht2").value.trim().toUpperCase();
@@ -1249,6 +1274,10 @@ async function sendFeedback(preferredChannel) {
     status.innerText = "✅ Feedback Sent";
   }
 
+  if (typeof window.trackEvent === "function") {
+    window.trackEvent("feedback_sent", { page: pageTitle, channel: channel });
+  }
+
   try {
     // Also passively notify backend if running
     fetch("/api/send-whatsapp", {
@@ -1306,6 +1335,11 @@ document.addEventListener("mousemove", e => {
             const error = document.getElementById("errorMsg");
 
             if (!ht) return;
+            if (typeof window.trackEvent === "function") {
+                window.trackEvent("backlog_report", {
+                    college_code: ht.length >= 4 ? ht.substring(2, 4) : "UNKNOWN"
+                });
+            }
             error.classList.add("hidden"); area.classList.add("hidden"); loader.classList.remove("hidden");
 
             try {

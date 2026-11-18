@@ -15,8 +15,30 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="ai-bot.css">
     <script src="theme.js"></script>
+    <!-- Google tag (gtag.js) - 100% Free Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2WWBG5GD2Q"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-2WWBG5GD2Q', {
+        send_page_view: true
+      });
+      window.trackEvent = function(name, params) {
+        try { if (typeof gtag === "function") gtag("event", name, params || {}); } catch(e){}
+      };
+    </script>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TJJ22GGG');</script>
 </head>
 <body class="min-h-screen flex flex-col">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TJJ22GGG"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <div id="spotlight"></div>
     <div id="burst-container"></div>
@@ -180,6 +202,7 @@
       </p>
         <div class="mt-6">
     <a href="https://expo.dev/artifacts/eas/hUXNz5RPAG1R9Wc8K8geDb.apk" 
+       onclick="window.trackEvent && window.trackEvent('apk_download', { location: 'footer' });"
        class="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-800 px-4 py-2 rounded-xl group hover:border-yellow-accent transition-all">
        <div class="w-8 h-8 bg-yellow-accent rounded-lg flex items-center justify-center text-black group-hover:scale-110 transition-transform">
          <i class="fas fa-robot text-sm"></i>
@@ -321,6 +344,7 @@
         </div>
 
         <a href="https://expo.dev/artifacts/eas/hUXNz5RPAG1R9Wc8K8geDb.apk" 
+           onclick="window.trackEvent && window.trackEvent('apk_download', { location: 'banner' });"
            class="bg-yellow-accent hover:bg-yellow-400 text-black font-black px-4 py-2 rounded-lg text-[9px] uppercase tracking-widest transition-all active:scale-95 shadow-lg flex items-center gap-2">
             Get <i class="fas fa-download text-[8px]"></i>
         </a>

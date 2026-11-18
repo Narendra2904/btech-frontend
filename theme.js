@@ -65,6 +65,9 @@
 
     // Optional event dispatch for any custom components
     window.dispatchEvent(new CustomEvent("themechange", { detail: { theme: next } }));
+    if (typeof window.trackEvent === "function") {
+      window.trackEvent("theme_toggle", { theme: next });
+    }
   }
 
   // Expose globally
