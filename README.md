@@ -97,7 +97,7 @@ A built-in client and server-assisted AI assistant accessible from a floating la
 - **Frontend**: HTML5, Vanilla JavaScript (ES6+), Tailwind CSS, FontAwesome 6.4, Custom CSS Animations, Dark/Light Theme Engine.
 - **Backend**: Node.js, Express.js (Clean URL routing, static file serving, proxy handling).
 - **AI Integration**: Google Gemini 1.5 Flash (`@google/genai` API proxy with Markdown typography & autonomous offline fallback).
-- **Communication & Feedback**: 100% Free WhatsApp Click-to-Chat & Direct Mail feedback dispatch (with optional Twilio sandbox support).
+- **Communication & Feedback**: Twilio WhatsApp API feedback delivery (server-side dispatch without exposing direct numbers).
 - **Deployment**: Vercel (Frontend & Serverless Functions) + Render (API / Node backend).
 
 ---

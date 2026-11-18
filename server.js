@@ -20,33 +20,40 @@ if (process.env.TWILIO_SID && process.env.TWILIO_TOKEN) {
   }
 }
 
-// WhatsApp / Free Feedback Route
+// Twilio WhatsApp Feedback Route
 app.post("/api/send-whatsapp", async (req, res) => {
-  const { name, roll, feedback, page, channel } = req.body || {};
+  const { name, roll, feedback, page } = req.body || {};
 
-  console.log("📨 Feedback received:", { page, roll, feedback: feedback?.substring(0, 60), channel });
+  console.log("📨 Feedback received:", { page, roll, feedback: feedback?.substring(0, 60) });
 
   if (!feedback) {
     return res.status(400).json({ ok: false, error: "Feedback message is required" });
   }
 
-  // If Twilio credentials are configured, attempt sending WhatsApp alert
-  if (twilioClient && process.env.MY_NUMBER) {
-    try {
-      await twilioClient.messages.create({
-        from: "whatsapp:+14155238886",
-        to: `whatsapp:+91${process.env.MY_NUMBER}`,
-        body: `📩 *New Feedback Received*\n💬 *Message:* ${feedback}\n📄 *Page:* ${page || "Unknown"}\n👤 *Roll:* ${roll || "N/A"}`
-      });
-      console.log("✅ Sent to Twilio WhatsApp sandbox!");
-      return res.json({ ok: true, method: "twilio" });
-    } catch (err) {
-      console.warn("Twilio delivery failed (falling back to free mode):", err.message);
-    }
+  // Ensure Twilio credentials are configured
+  if (!process.env.TWILIO_SID || !process.env.TWILIO_TOKEN || !process.env.MY_NUMBER) {
+    console.warn("Twilio credentials not configured on server");
+    return res.status(500).json({ ok: false, error: "Twilio credentials not configured" });
   }
 
-  // Free mode fallback - successfully recorded
-  res.json({ ok: true, freeMode: true, message: "Feedback recorded successfully" });
+  try {
+    const client = twilioClient || twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
+    let toNum = process.env.MY_NUMBER.trim();
+    if (!toNum.startsWith("+")) {
+      toNum = toNum.startsWith("91") && toNum.length === 12 ? `+${toNum}` : `+91${toNum}`;
+    }
+
+    await client.messages.create({
+      from: "whatsapp:+14155238886",
+      to: `whatsapp:${toNum}`,
+      body: `📩 *New Feedback Received*\n💬 *Message:* ${feedback}\n📄 *Page:* ${page || "Unknown"}\n👤 *Roll:* ${roll || "N/A"}`
+    });
+    console.log("✅ Sent to Twilio WhatsApp!");
+    return res.json({ ok: true, method: "twilio" });
+  } catch (err) {
+    console.error("Twilio delivery failed:", err.message);
+    return res.status(500).json({ ok: false, error: err.message || "Failed to send via Twilio" });
+  }
 });
 
 

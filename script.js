@@ -1229,14 +1229,8 @@ document.getElementById("hallTicketInput")?.addEventListener("keydown", (e) => {
        
 
 
-/* ---------- 100% FREE FEEDBACK SYSTEM (WhatsApp & Mail) ---------- */
-const FEEDBACK_CONFIG = {
-  // Developer WhatsApp number (if known, or can be set via window.FEEDBACK_PHONE)
-  phone: window.FEEDBACK_PHONE || "919014164344",
-  email: window.FEEDBACK_EMAIL || "narendrayenagandula05@gmail.com",
-};
-
-async function sendFeedback(preferredChannel) {
+/* ---------- FEEDBACK SYSTEM (Twilio WhatsApp Only) ---------- */
+async function sendFeedback() {
   const nameInput = document.getElementById("feedbackName");
   const msgInput = document.getElementById("feedbackMessage");
   const btn = document.getElementById("feedbackBtn");
@@ -1257,61 +1251,53 @@ async function sendFeedback(preferredChannel) {
     return;
   }
 
-  // Format the feedback message nicely
-  const formattedText = `🎓 *Backbenchers Portal Feedback*\n📄 *Page:* ${pageTitle}\n👤 *Roll/User:* ${roll}\n💬 *Message:* ${feedback}\n⏰ *Time:* ${new Date().toLocaleString()}`;
-
-  const channel = preferredChannel || window.lastFeedbackChannel || "whatsapp";
-
+  // 2. Button loading state
+  const origBtnText = btn ? btn.innerHTML : "SEND";
   if (btn) {
-    btn.dataset.origText = btn.innerHTML;
     btn.innerText = "SENDING...";
     btn.disabled = true;
   }
-
   if (status) {
-    status.classList.remove("hidden", "text-red-500", "text-yellow-500");
-    status.classList.add("text-green-500");
-    status.innerText = "✅ Feedback Sent";
-  }
-
-  if (typeof window.trackEvent === "function") {
-    window.trackEvent("feedback_sent", { page: pageTitle, channel: channel });
+    status.classList.add("hidden");
   }
 
   try {
-    // Also passively notify backend if running
-    fetch("/api/send-whatsapp", {
+    const res = await fetch("/api/send-whatsapp", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ feedback, page: pageTitle, roll, channel })
-    }).catch(() => {});
+      body: JSON.stringify({ feedback, page: pageTitle, roll, name })
+    });
 
-    if (channel === "mail") {
-      // 100% Free Mail dispatch via mailto:
-      const cleanBody = formattedText.replace(/\*/g, "");
-      const mailtoUrl = `mailto:${FEEDBACK_CONFIG.email}?subject=${encodeURIComponent("Feedback: " + pageTitle + " (" + roll + ")")}&body=${encodeURIComponent(cleanBody)}`;
-      window.open(mailtoUrl, "_blank");
+    const data = await res.json().catch(() => ({}));
+
+    if (res.ok && data.ok) {
+      if (status) {
+        status.innerText = "✅ Feedback Sent";
+        status.classList.remove("hidden", "text-red-500", "text-yellow-500");
+        status.classList.add("text-green-500");
+      }
+      if (msgInput) msgInput.value = "";
+      if (typeof window.trackEvent === "function") {
+        window.trackEvent("feedback_sent", { page: pageTitle, method: "twilio" });
+      }
     } else {
-      // 100% Free WhatsApp Click-to-Chat dispatch
-      const waUrl = FEEDBACK_CONFIG.phone 
-        ? `https://api.whatsapp.com/send?phone=${FEEDBACK_CONFIG.phone}&text=${encodeURIComponent(formattedText)}`
-        : `https://api.whatsapp.com/send?text=${encodeURIComponent(formattedText)}`;
-      window.open(waUrl, "_blank");
+      throw new Error(data.error || "Failed to send feedback");
     }
-
-    if (msgInput) msgInput.value = "";
   } catch (err) {
     console.error("Feedback dispatch error:", err);
+    if (status) {
+      status.innerText = "❌ Failed to send";
+      status.classList.remove("hidden", "text-green-500", "text-yellow-500");
+      status.classList.add("text-red-500");
+    }
   } finally {
+    if (btn) {
+      btn.innerHTML = origBtnText;
+      btn.disabled = false;
+    }
     setTimeout(() => {
-      if (btn && btn.dataset.origText) {
-        btn.innerHTML = btn.dataset.origText;
-        btn.disabled = false;
-      }
-      setTimeout(() => {
-        if (status) status.classList.add("hidden");
-      }, 3500);
-    }, 1200);
+      if (status) status.classList.add("hidden");
+    }, 4000);
   }
 }
 
