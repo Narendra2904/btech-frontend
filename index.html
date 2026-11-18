@@ -333,43 +333,35 @@ Good Day Bro</p>
       </div>
     </div>
 
-    <!-- FEEDBACK (100% Free WhatsApp / Mail) -->
+    <!-- FEEDBACK -->
     <div>
-      <div class="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/60 transition-all">
-        <div class="flex items-center justify-between mb-4">
-          <h4 class="font-black text-[10px] uppercase tracking-[0.3em] text-zinc-500">
-            Free Feedback
-          </h4>
-          <span class="text-[9px] font-bold text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full border border-green-500/20">
-            100% Free
-          </span>
-        </div>
+      <div class="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/60">
+        <h4 class="font-black text-[10px] uppercase tracking-[0.3em] mb-4 text-zinc-500">
+          Feedback
+        </h4>
         <input
-          id="feedbackMessage"
+        id="feedbackMessage"
           type="text"
-          placeholder="Any issues or suggestions?"
-          class="w-full bg-black border border-zinc-800 rounded-lg px-4 py-2.5 text-xs mb-3 focus:border-yellow-accent outline-none text-zinc-200 transition-all"
+          placeholder="Any issues?"
+          class="w-full bg-black border border-zinc-800 rounded-lg
+                 px-4 py-2.5 text-xs mb-3
+                 focus:border-yellow-accent outline-none"
         />
-        <div class="grid grid-cols-2 gap-2">
-          <button
-            onclick="sendFeedback('whatsapp')"
-            class="bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-lg text-[10px] transition-all uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
-            title="Send instantly via WhatsApp (Free)"
-          >
-            <i class="fab fa-whatsapp text-xs"></i> WhatsApp
-          </button>
-          <button
-            onclick="sendFeedback('mail')"
-            class="bg-yellow-accent hover:bg-yellow-400 text-black font-black py-2.5 rounded-lg text-[10px] transition-all uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
-            title="Send via Email (Free)"
-          >
-            <i class="fas fa-envelope text-xs"></i> Mail
-          </button>
-        </div>
-        <p id="feedbackStatus"
-           class="hidden mt-3 text-[10px] font-black uppercase tracking-widest text-green-500 text-center">
-          ✅ Feedback Sent
-        </p>
+    <button
+  id="feedbackBtn"
+  onclick="sendFeedback()"
+  class="w-full bg-yellow-accent text-black font-black
+         py-2.5 rounded-lg text-[10px]
+         hover:bg-yellow-400 transition-all uppercase tracking-widest">
+  SEND
+</button>
+
+<p id="feedbackStatus"
+   class="hidden mt-3 text-[10px] font-black uppercase tracking-widest text-green-500 text-center">
+  ✅ Feedback Sent
+</p>
+
+
       </div>
     </div>
   </div>
@@ -454,87 +446,6 @@ Good Day Bro</p>
 </footer>
 <script src="script.js" defer></script>
 <script>
-  // 📱 APP DOWNLOAD LOGIC (Popup + Sticky Bar)
-  
-  // Use addEventListener to prevent conflicts with other scripts
-  window.addEventListener('load', function() {
-      console.log("Page loaded, triggering popup in 1 second..."); // Debug message
-      setTimeout(showAppPopup, 1000);
-  });
-
-  // --- 1. MODAL POPUP FUNCTIONS ---
-  function showAppPopup() {
-    // Prevent duplicate popups
-    if (document.getElementById("appPopup")) return;
-
-    console.log("Creating Popup..."); // Debug message
-
-    const popup = document.createElement("div");
-    popup.id = "appPopup";
-    // Added 'flex' and fixed z-index to ensure visibility
-    popup.className = "fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center p-4";
-
-    const apkLink = "https://expo.dev/artifacts/eas/jVvPNbB9hRwgeRKS3qhbYe.apk";
-
-    popup.innerHTML = `
-      <div class="bg-white text-black w-full max-w-[340px] p-6 rounded-2xl shadow-2xl relative border border-yellow-500/30">
-        
-        <button onclick="closeAppPopup()" 
-                class="absolute top-3 right-3 text-gray-400 hover:text-red-500 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-
-        <div class="flex justify-center mb-4">
-          <div class="bg-yellow-100 p-3 rounded-full">
-             <i class="fab fa-android text-3xl text-yellow-600"></i>
-          </div>
-        </div>
-
-        <h2 class="text-center font-black text-xl uppercase tracking-wider mb-2 text-gray-900">
-          Download the App
-        </h2>
-        
-        <p class="text-center text-sm font-medium text-gray-600 mb-6 leading-relaxed">
-          Get the official <span class="text-yellow-600 font-bold">Android App</span> for a faster experience! 🚀
-        </p>
-
-        <div class="flex flex-col gap-3">
-          <a href="${apkLink}" 
-             target="_blank"
-             class="block w-full bg-yellow-600 hover:bg-yellow-500 text-white font-black py-3 rounded-xl text-center text-sm uppercase tracking-widest shadow-lg shadow-yellow-500/30 active:scale-95 transition-all flex items-center justify-center gap-2">
-             <i class="fas fa-download"></i> Download APK
-          </a>
-          
-          <button onclick="closeAppPopup()" 
-                  class="block w-full text-gray-400 hover:text-gray-600 font-bold text-xs uppercase tracking-widest py-2">
-            Maybe Later
-          </button>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(popup);
-  }
-
-  function closeAppPopup() {
-    const popup = document.getElementById("appPopup");
-    if (popup) {
-      popup.remove();
-      showStickyNotification();
-    }
-  }
-
-  // --- 2. STICKY NOTIFICATION FUNCTIONS ---
-  function showStickyNotification() {
-    const notification = document.getElementById("app-download-notification");
-    if (notification) {
-      // Force display flex to override 'display: none'
-      notification.style.display = "flex"; 
-    }
-  }
-
   // Define this globally so the HTML onclick can find it
   window.closeAppNotification = function() {
     const notification = document.getElementById("app-download-notification");
@@ -543,7 +454,7 @@ Good Day Bro</p>
     }
   }
 
-  // --- 3. MOBILE MENU LOGIC ---
+  // --- MOBILE MENU LOGIC ---
   function toggleMobileMenu() {
     const menu = document.getElementById("mobileMenu");
     const icon = document.querySelector('nav button i'); 

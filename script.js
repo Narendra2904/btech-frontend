@@ -1239,14 +1239,14 @@ async function sendFeedback(preferredChannel) {
 
   if (btn) {
     btn.dataset.origText = btn.innerHTML;
-    btn.innerText = "OPENING...";
+    btn.innerText = "SENDING...";
     btn.disabled = true;
   }
 
   if (status) {
-    status.classList.remove("hidden", "text-red-500", "text-green-500");
-    status.classList.add("text-yellow-500");
-    status.innerText = channel === "mail" ? "✉️ Opening Email..." : "💬 Opening WhatsApp...";
+    status.classList.remove("hidden", "text-red-500", "text-yellow-500");
+    status.classList.add("text-green-500");
+    status.innerText = "✅ Feedback Sent";
   }
 
   try {
@@ -1262,29 +1262,17 @@ async function sendFeedback(preferredChannel) {
       const cleanBody = formattedText.replace(/\*/g, "");
       const mailtoUrl = `mailto:${FEEDBACK_CONFIG.email}?subject=${encodeURIComponent("Feedback: " + pageTitle + " (" + roll + ")")}&body=${encodeURIComponent(cleanBody)}`;
       window.open(mailtoUrl, "_blank");
-      if (status) {
-        status.innerText = "✅ Email Client Opened!";
-        status.classList.replace("text-yellow-500", "text-green-500");
-      }
     } else {
       // 100% Free WhatsApp Click-to-Chat dispatch
       const waUrl = FEEDBACK_CONFIG.phone 
         ? `https://api.whatsapp.com/send?phone=${FEEDBACK_CONFIG.phone}&text=${encodeURIComponent(formattedText)}`
         : `https://api.whatsapp.com/send?text=${encodeURIComponent(formattedText)}`;
       window.open(waUrl, "_blank");
-      if (status) {
-        status.innerText = "✅ WhatsApp Opened!";
-        status.classList.replace("text-yellow-500", "text-green-500");
-      }
     }
 
     if (msgInput) msgInput.value = "";
   } catch (err) {
     console.error("Feedback dispatch error:", err);
-    if (status) {
-      status.innerText = "⚠️ Feedback opened";
-      status.classList.replace("text-yellow-500", "text-green-500");
-    }
   } finally {
     setTimeout(() => {
       if (btn && btn.dataset.origText) {
@@ -1293,8 +1281,8 @@ async function sendFeedback(preferredChannel) {
       }
       setTimeout(() => {
         if (status) status.classList.add("hidden");
-      }, 4000);
-    }, 1500);
+      }, 3500);
+    }, 1200);
   }
 }
 

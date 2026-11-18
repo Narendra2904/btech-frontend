@@ -2402,8 +2402,10 @@
     win.classList.add("bb-ai-open");
     state.isOpen = true;
 
-    // Focus input on desktop
-    if (window.innerWidth > 640) {
+    // Lock body scroll on mobile to avoid background scrolling
+    if (window.innerWidth <= 640) {
+      document.body.style.overflow = "hidden";
+    } else {
       setTimeout(() => document.getElementById("bb-ai-input")?.focus(), 300);
     }
   }
@@ -2413,6 +2415,7 @@
     if (!win) return;
     win.classList.remove("bb-ai-open");
     state.isOpen = false;
+    document.body.style.overflow = "";
   }
 
   function clearChat() {

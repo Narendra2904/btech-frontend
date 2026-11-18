@@ -501,39 +501,28 @@
       </div>
     </div>
 
-    <!-- FEEDBACK (100% Free WhatsApp / Mail) -->
+    <!-- FEEDBACK -->
     <div>
-      <div class="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/60 transition-all">
-        <div class="flex items-center justify-between mb-4">
-          <h4 class="font-black text-[10px] uppercase tracking-[0.3em] text-zinc-500">
-            Free Feedback
-          </h4>
-          <span class="text-[9px] font-bold text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full border border-green-500/20">
-            100% Free
-          </span>
-        </div>
+      <div class="bg-zinc-900/50 p-6 rounded-2xl border border-zinc-800/60">
+        <h4 class="font-black text-[10px] uppercase tracking-[0.3em] mb-4 text-zinc-500">
+          Feedback
+        </h4>
         <input
-          id="feedbackMessage"
+        id="feedbackMessage"
           type="text"
-          placeholder="Any issues or suggestions?"
-          class="w-full bg-black border border-zinc-800 rounded-lg px-4 py-2.5 text-xs mb-3 focus:border-yellow-accent outline-none text-zinc-200 transition-all"
+          placeholder="Any issues?"
+          class="w-full bg-black border border-zinc-800 rounded-lg
+                 px-4 py-2.5 text-xs mb-3
+                 focus:border-yellow-accent outline-none"
         />
-        <div class="grid grid-cols-2 gap-2">
-          <button
-            onclick="sendFeedback('whatsapp')"
-            class="bg-emerald-600 hover:bg-emerald-500 text-white font-black py-2.5 rounded-lg text-[10px] transition-all uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
-            title="Send instantly via WhatsApp (Free)"
-          >
-            <i class="fab fa-whatsapp text-xs"></i> WhatsApp
-          </button>
-          <button
-            onclick="sendFeedback('mail')"
-            class="bg-yellow-accent hover:bg-yellow-400 text-black font-black py-2.5 rounded-lg text-[10px] transition-all uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
-            title="Send via Email (Free)"
-          >
-            <i class="fas fa-envelope text-xs"></i> Mail
-          </button>
-        </div>
+        <button
+          id="feedbackBtn"
+          onclick="sendFeedback()"
+          class="w-full bg-yellow-accent text-black font-black
+                 py-2.5 rounded-lg text-[10px]
+                 hover:bg-yellow-400 transition-all uppercase tracking-widest">
+          SEND
+        </button>
         <p id="feedbackStatus"
            class="hidden mt-3 text-[10px] font-black uppercase tracking-widest text-green-500 text-center">
           ✅ Feedback Sent
@@ -940,14 +929,14 @@ async function sendFeedback(preferredChannel) {
 
   if (btn) {
     btn.dataset.origText = btn.innerHTML;
-    btn.innerText = "OPENING...";
+    btn.innerText = "SENDING...";
     btn.disabled = true;
   }
 
   if (status) {
-    status.classList.remove("hidden", "text-red-500", "text-green-500");
-    status.classList.add("text-yellow-500");
-    status.innerText = channel === "mail" ? "✉️ Opening Email..." : "💬 Opening WhatsApp...";
+    status.classList.remove("hidden", "text-red-500", "text-yellow-500");
+    status.classList.add("text-green-500");
+    status.innerText = "✅ Feedback Sent";
   }
 
   try {
@@ -961,33 +950,27 @@ async function sendFeedback(preferredChannel) {
       const cleanBody = formattedText.replace(/\*/g, "");
       const mailtoUrl = `mailto:${FEEDBACK_CONFIG.email}?subject=${encodeURIComponent("Feedback: " + pageTitle + " (" + roll + ")")}&body=${encodeURIComponent(cleanBody)}`;
       window.open(mailtoUrl, "_blank");
-      if (status) {
-        status.innerText = "✅ Email Client Opened!";
-        status.classList.replace("text-yellow-500", "text-green-500");
-      }
     } else {
       const waUrl = FEEDBACK_CONFIG.phone 
         ? `https://api.whatsapp.com/send?phone=${FEEDBACK_CONFIG.phone}&text=${encodeURIComponent(formattedText)}`
         : `https://api.whatsapp.com/send?text=${encodeURIComponent(formattedText)}`;
       window.open(waUrl, "_blank");
-      if (status) {
-        status.innerText = "✅ WhatsApp Opened!";
-        status.classList.replace("text-yellow-500", "text-green-500");
-      }
     }
 
     if (msgInput) msgInput.value = "";
   } catch (err) {
     console.error("Feedback dispatch error:", err);
-    if (status) {
-      status.innerText = "⚠️ Feedback opened";
-      status.classList.replace("text-yellow-500", "text-green-500");
-    }
   } finally {
     setTimeout(() => {
       if (btn && btn.dataset.origText) {
         btn.innerHTML = btn.dataset.origText;
         btn.disabled = false;
+      }
+      setTimeout(() => {
+        if (status) status.classList.add("hidden");
+      }, 3500);
+    }, 1200);
+  }
       }
       setTimeout(() => {
         if (status) status.classList.add("hidden");
